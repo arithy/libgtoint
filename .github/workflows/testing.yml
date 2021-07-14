@@ -1,0 +1,31 @@
+name: run test cases
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  testing:
+    strategy:
+      matrix:
+        os: [ubuntu-16.04, ubuntu-20.04]
+        compiler: [gcc, clang]
+
+    runs-on: ${{ matrix.os }}
+
+    env:
+      CC: ${{ matrix.compiler }}
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: build and test
+      run: |
+        (
+        mkdir -p build/$CC
+        cd  build/$CC
+        cmake ../..
+        make -j
+        make test
+        )
