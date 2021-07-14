@@ -37,7 +37,7 @@ mkdir build
 cd build
 cmake ..
 make
-make check
+make test
 sudo make install
 ```
 
@@ -84,7 +84,7 @@ mkdir build
 cd build
 cmake -G "MSYS Makefiles" -DCMAKE_INSTALL_PREFIX=/usr/local ..
 make
-make check
+make test
 make install
 ```
 
