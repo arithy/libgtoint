@@ -34,7 +34,7 @@ function(add_common_compile_options target)
                 -Wall -Wextra -Wno-unused-parameter -Wno-misleading-indentation -pedantic -Werror
             >
             $<$<C_COMPILER_ID:Clang>:
-                -Wall -Wextra -Wno-unused-parameter -Wno-misleading-indentation -pedantic -Werror
+                -Wall -Wextra -Wno-unused-parameter -pedantic -Werror
             >
             $<$<AND:$<C_COMPILER_ID:Intel>,$<NOT:$<PLATFORM_ID:Windows>>>:
                 -Wall -Wextra -Wno-unused-parameter -pedantic -Werror
