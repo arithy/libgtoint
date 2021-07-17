@@ -31,6 +31,10 @@
 #define ARRAY_INIT_ALLOC 16
 #endif
 
+#ifndef CACHE_TABLE_SIZE
+#define CACHE_TABLE_SIZE 0x1000 /* must be a power of 2 */
+#endif
+
 /*== cache_index_array_t ==*/
 
 inline static void cache_index_array__clear_(cache_index_array_t *obj) {
@@ -104,27 +108,42 @@ void gtoint__cache_index_array__compact(cache_index_array_t *obj) {
 void gtoint__cache__initialize(cache_t *obj) {
     obj->l = 0;
     obj->n = 0;
-    gtoint__size_t_array__initialize(&(obj->o));
+    gtoint__size_t_array__initialize(&(obj->h));
+    gtoint__size_t_array__initialize(&(obj->c));
     gtoint__cache_index_array__initialize(&(obj->i));
     gtoint__double_array__initialize(&(obj->v));
 }
 
 void gtoint__cache__finalize(cache_t *obj) {
-    gtoint__size_t_array__finalize(&(obj->o));
+    gtoint__size_t_array__finalize(&(obj->h));
+    gtoint__size_t_array__finalize(&(obj->c));
     gtoint__cache_index_array__finalize(&(obj->i));
     gtoint__double_array__finalize(&(obj->v));
 }
 
-void gtoint__cache__reset(cache_t *obj, size_t ncc) {
-    obj->l = ncc;
+void gtoint__cache__clear(cache_t *obj) {
+    obj->l = 0;
     obj->n = 0;
-    gtoint__size_t_array__resize(&(obj->o), 0);
+    gtoint__size_t_array__resize(&(obj->h), 0);
+    gtoint__size_t_array__resize(&(obj->c), 0);
     gtoint__cache_index_array__resize(&(obj->i), 0);
     gtoint__double_array__resize(&(obj->v), 0);
 }
 
+bool gtoint__cache__reset(cache_t *obj, size_t ncc) {
+    if (!gtoint__size_t_array__resize(&(obj->h), CACHE_TABLE_SIZE)) return false;
+    gtoint__size_t_array__resize(&(obj->c), 0);
+    gtoint__cache_index_array__resize(&(obj->i), 0);
+    gtoint__double_array__resize(&(obj->v), 0);
+    for (size_t i = 0; i < obj->h.n; i++) obj->h.p[i] = CACHE_VOID_INDEX;
+    obj->l = ncc;
+    obj->n = 0;
+    return true;
+}
+
 bool gtoint__cache__copy(cache_t *obj, const cache_t *src) {
-    if (!gtoint__size_t_array__copy(&(obj->o), &(src->o))) return false;
+    if (!gtoint__size_t_array__copy(&(obj->h), &(src->h))) return false;
+    if (!gtoint__size_t_array__copy(&(obj->c), &(src->c))) return false;
     if (!gtoint__cache_index_array__copy(&(obj->i), &(src->i))) return false;
     if (!gtoint__double_array__copy(&(obj->v), &(src->v))) return false;
     obj->l = src->l;
@@ -139,7 +158,8 @@ void gtoint__cache__move(cache_t *obj, cache_t *src) {
 }
 
 void gtoint__cache__compact(cache_t *obj) {
-    gtoint__size_t_array__compact(&(obj->o));
+    gtoint__size_t_array__compact(&(obj->h));
+    gtoint__size_t_array__compact(&(obj->c));
     gtoint__cache_index_array__compact(&(obj->i));
     gtoint__double_array__compact(&(obj->v));
 }

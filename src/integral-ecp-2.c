@@ -392,7 +392,7 @@ gtoint_error_t gtoint__compute_scalar_ecp_type2_integrals(
     }
     const size_t ng01 = ng0 * ng1;
     const size_t ng01c = ng01 * ngc;
-    gtoint__cache__reset(&(itg->c), ng01c);
+    if (!gtoint__cache__reset(&(itg->c), ng01c)) return GTOINT_ERROR_MEMORY;
     if (!gtoint__double_array__resize(&(itg->w), ng01 * NVAR)) return GTOINT_ERROR_MEMORY;
     size_t ivar = 0;
     double *const e01 = itg->w.p + ng01 * ivar++;

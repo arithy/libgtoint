@@ -24,86 +24,77 @@
 
 #include "cache.h"
 
-#include <string.h>
+inline static bool equals_mmi_(const index_t *a, const index_t *b) {
+    if (a->mmi.m.x != b->mmi.m.x) return false;
+    if (a->mmi.m.y != b->mmi.m.y) return false;
+    if (a->mmi.m.z != b->mmi.m.z) return false;
+    if (a->mmi.a[0].x != b->mmi.a[0].x) return false;
+    if (a->mmi.a[0].y != b->mmi.a[0].y) return false;
+    if (a->mmi.a[0].z != b->mmi.a[0].z) return false;
+    if (a->mmi.a[1].x != b->mmi.a[1].x) return false;
+    if (a->mmi.a[1].y != b->mmi.a[1].y) return false;
+    if (a->mmi.a[1].z != b->mmi.a[1].z) return false;
+    if (a->mmi.d[0].x != b->mmi.d[0].x) return false;
+    if (a->mmi.d[0].y != b->mmi.d[0].y) return false;
+    if (a->mmi.d[0].z != b->mmi.d[0].z) return false;
+    if (a->mmi.d[1].x != b->mmi.d[1].x) return false;
+    if (a->mmi.d[1].y != b->mmi.d[1].y) return false;
+    if (a->mmi.d[1].z != b->mmi.d[1].z) return false;
+    return true;
+}
 
-inline static int compare_indices_mmi_(const index_t *a, const index_t *b) {
-    if (a->mmi.m.x > b->mmi.m.x) return 1;
-    if (a->mmi.m.x < b->mmi.m.x) return -1;
-    if (a->mmi.m.y > b->mmi.m.y) return 1;
-    if (a->mmi.m.y < b->mmi.m.y) return -1;
-    if (a->mmi.m.z > b->mmi.m.z) return 1;
-    if (a->mmi.m.z < b->mmi.m.z) return -1;
-    if (a->mmi.a[0].x > b->mmi.a[0].x) return 1;
-    if (a->mmi.a[0].x < b->mmi.a[0].x) return -1;
-    if (a->mmi.a[0].y > b->mmi.a[0].y) return 1;
-    if (a->mmi.a[0].y < b->mmi.a[0].y) return -1;
-    if (a->mmi.a[0].z > b->mmi.a[0].z) return 1;
-    if (a->mmi.a[0].z < b->mmi.a[0].z) return -1;
-    if (a->mmi.a[1].x > b->mmi.a[1].x) return 1;
-    if (a->mmi.a[1].x < b->mmi.a[1].x) return -1;
-    if (a->mmi.a[1].y > b->mmi.a[1].y) return 1;
-    if (a->mmi.a[1].y < b->mmi.a[1].y) return -1;
-    if (a->mmi.a[1].z > b->mmi.a[1].z) return 1;
-    if (a->mmi.a[1].z < b->mmi.a[1].z) return -1;
-    if (a->mmi.d[0].x > b->mmi.d[0].x) return 1;
-    if (a->mmi.d[0].x < b->mmi.d[0].x) return -1;
-    if (a->mmi.d[0].y > b->mmi.d[0].y) return 1;
-    if (a->mmi.d[0].y < b->mmi.d[0].y) return -1;
-    if (a->mmi.d[0].z > b->mmi.d[0].z) return 1;
-    if (a->mmi.d[0].z < b->mmi.d[0].z) return -1;
-    if (a->mmi.d[1].x > b->mmi.d[1].x) return 1;
-    if (a->mmi.d[1].x < b->mmi.d[1].x) return -1;
-    if (a->mmi.d[1].y > b->mmi.d[1].y) return 1;
-    if (a->mmi.d[1].y < b->mmi.d[1].y) return -1;
-    if (a->mmi.d[1].z > b->mmi.d[1].z) return 1;
-    if (a->mmi.d[1].z < b->mmi.d[1].z) return -1;
-    return 0;
+inline static int hash_mmi_(const index_t *a) {
+    return
+        a->mmi.m.x + 3 * (
+        a->mmi.m.y + 3 * (
+        a->mmi.m.z + 3 * (
+        a->mmi.a[0].x + 5 * (
+        a->mmi.a[0].y + 5 * (
+        a->mmi.a[0].z + 5 * (
+        a->mmi.a[1].x + 5 * (
+        a->mmi.a[1].y + 5 * (
+        a->mmi.a[1].z + 5 * (
+        a->mmi.d[0].x + 3 * (
+        a->mmi.d[0].y + 3 * (
+        a->mmi.d[0].z + 3 * (
+        a->mmi.d[1].x + 3 * (
+        a->mmi.d[1].y + 3 * (
+        a->mmi.d[1].z))))))))))))));
 }
 
 inline static bool cache__find_entry_mmi_(const cache_t *obj, const index_t *index, size_t *out) {
-    if (obj->n <= 0) { *out = 0; return false; }
-    size_t min = 0;
-    size_t max = obj->n - 1;
-    for (;;) {
-        const size_t mid = min + ((max - min) >> 1);
-        const int c = compare_indices_mmi_(index, &(obj->i.p[obj->o.p[mid]]));
-        if (c > 0) {
-            if (min == mid) { *out = min + 1; return false; }
-            min = mid + 1;
-        }
-        else if (c < 0) {
-            if (min == mid) { *out = min; return false; }
-            max = mid - 1;
-        }
-        else {
-            *out = mid;
+    const size_t h = (size_t)hash_mmi_(index) & (obj->h.n - 1);
+    for (size_t i = obj->h.p[h]; i != CACHE_VOID_INDEX; i = obj->c.p[i]) {
+        if (equals_mmi_(&(obj->i.p[i]), index)) {
+            *out = i;
             return true;
         }
     }
+    *out = h;
+    return false;
 }
 
 bool gtoint__cache__reference_to_store_mmi(cache_t *obj, const index_t *index, double **value) {
-    size_t m, k;
-    if (cache__find_entry_mmi_(obj, index, &m)) {
-        k = obj->o.p[m];
-    }
-    else {
-        k = obj->n;
-        if (!gtoint__size_t_array__resize(&(obj->o), obj->n + 1)) return false;
+    if (obj->h.n <= 0 && !gtoint__cache__reset(obj, obj->l)) return false;
+    size_t i;
+    if (!cache__find_entry_mmi_(obj, index, &i)) {
+        const size_t h = i;
+        i = obj->n;
+        if (!gtoint__size_t_array__resize(&(obj->c), obj->n + 1)) return false;
         if (!gtoint__cache_index_array__resize(&(obj->i), obj->n + 1)) return false;
         if (!gtoint__double_array__resize(&(obj->v), obj->l * (obj->n + 1))) return false;
         obj->n++;
-        memmove(obj->o.p + m + 1, obj->o.p + m, sizeof(size_t) * (obj->o.n - m - 1));
-        obj->o.p[m] = k;
-        obj->i.p[k] = *index;
+        obj->i.p[i] = *index;
+        obj->c.p[i] = obj->h.p[h];
+        obj->h.p[h] = i;
     }
-    if (value) *value = obj->v.p + obj->l * k;
+    if (value) *value = obj->v.p + obj->l * i;
     return true;
 }
 
 bool gtoint__cache__reference_to_fetch_mmi(const cache_t *obj, const index_t *index, const double **value) {
-    size_t m;
-    if (!cache__find_entry_mmi_(obj, index, &m)) return false;
-    if (value) *value = obj->v.p + obj->l * obj->o.p[m];
+    size_t i;
+    if (!cache__find_entry_mmi_(obj, index, &i)) return false;
+    if (value) *value = obj->v.p + obj->l * i;
     return true;
 }

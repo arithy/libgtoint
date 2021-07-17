@@ -356,7 +356,7 @@ static gtoint_error_t compute_electron_repulsion_integrals_(
     const size_t ng01 = ng0 * ng1;
     const size_t ng23 = ng2 * ng3;
     const size_t ng0123 = ng01 * ng23;
-    gtoint__cache__reset(&(itg->c), ng0123);
+    if (!gtoint__cache__reset(&(itg->c), ng0123)) return GTOINT_ERROR_MEMORY;
     if (!gtoint__double_array__resize(&(itg->w), ng0123 * NVAR)) return GTOINT_ERROR_MEMORY;
     size_t ivar = 0;
     double *const g01   = itg->w.p + ng0123 * ivar++;

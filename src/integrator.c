@@ -65,7 +65,7 @@ void gtoint_integrator_destroy(gtoint_integrator_t itg) {
 void gtoint_integrator_cleanup_memory(gtoint_integrator_t itg) {
     gtoint__stack__reset(&(itg->s), 0);
     gtoint__stack__compact(&(itg->s));
-    gtoint__cache__reset(&(itg->c), 0);
+    gtoint__cache__clear(&(itg->c));
     gtoint__cache__compact(&(itg->c));
     gtoint__double_array__resize(&(itg->v), 0);
     gtoint__double_array__compact(&(itg->v));

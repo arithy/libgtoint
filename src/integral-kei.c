@@ -317,7 +317,7 @@ static gtoint_error_t compute_kinetic_energy_integrals_(
         if (max_d1.z < d1[i].z) max_d1.z = d1[i].z;
     }
     const size_t ng01 = ng0 * ng1;
-    gtoint__cache__reset(&(itg->c), ng01);
+    if (!gtoint__cache__reset(&(itg->c), ng01)) return GTOINT_ERROR_MEMORY;
     if (!gtoint__double_array__resize(&(itg->w), ng01 * NVAR)) return GTOINT_ERROR_MEMORY;
     size_t ivar = 0;
     double *const o01 = itg->w.p + ng01 * ivar++;

@@ -29,6 +29,8 @@
 #include "index.h"
 #include "array.h"
 
+#define CACHE_VOID_INDEX (~(~(size_t)0 >> 1))
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -40,8 +42,9 @@ typedef struct cache_index_array_tag {
 
 typedef struct cache_tag {
     size_t l; /* The number of the contract combinations. */
-    size_t n; /* The number of the cache entries. */
-    size_t_array_t o; /* The sorted indices of the cache entries. [n] */
+    size_t n; /* The number of the entries. */
+    size_t_array_t h; /* The hash table. [CACHE_TABLE_SIZE] */
+    size_t_array_t c; /* The next conflicted entry. [n] */
     cache_index_array_t i; /* The integral indices. [n] */
     double_array_t v; /* The integral values. [n][l] */
 } cache_t;
@@ -55,7 +58,8 @@ void gtoint__cache_index_array__compact(cache_index_array_t *obj);
 
 void gtoint__cache__initialize(cache_t *obj);
 void gtoint__cache__finalize(cache_t *obj);
-void gtoint__cache__reset(cache_t *obj, size_t ncc);
+void gtoint__cache__clear(cache_t *obj);
+bool gtoint__cache__reset(cache_t *obj, size_t ncc);
 bool gtoint__cache__reference_to_store_oi(cache_t *obj, const index_t *index, double **value);
 bool gtoint__cache__reference_to_store_kei(cache_t *obj, const index_t *index, double **value);
 bool gtoint__cache__reference_to_store_nai(cache_t *obj, const index_t *index, double **value);

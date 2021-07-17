@@ -323,7 +323,7 @@ gtoint_error_t gtoint__compute_scalar_ecp_type1_integrals_0(
         if (max_dc.z < dc[i].z) max_dc.z = dc[i].z;
     }
     const size_t ng01c = ng0 * ng1 * ngc;
-    gtoint__cache__reset(&(itg->c), ng01c);
+    if (!gtoint__cache__reset(&(itg->c), ng01c)) return GTOINT_ERROR_MEMORY;
     if (!gtoint__double_array__resize(&(itg->w), ng01c * NVAR)) return GTOINT_ERROR_MEMORY;
     size_t ivar = 0;
     double *const o01c = itg->w.p + ng01c * ivar++;
