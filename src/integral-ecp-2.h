@@ -29,6 +29,8 @@
 #include "array.h"
 #include "spherical.h"
 
+#define DATABASE_VOID_INDEX (~(~(size_t)0 >> 1))
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -50,8 +52,9 @@ typedef struct ecp_type2_angular_integral_array_tag {
 
 typedef struct ecp_type2_angular_integral_database_tag {
     size_t n; /* The number of the entries. */
-    size_t_array_t o; /* The sorted indices of the entries. */
-    ecp_type2_angular_integral_array_t a; /* The entries. */
+    size_t_array_t h; /* The hash table. [HASH_TABLE_SIZE] */
+    size_t_array_t c; /* The next conflicted entry. [n] */
+    ecp_type2_angular_integral_array_t a; /* The entries. [n] */
 } ecp_type2_angular_integral_database_t;
 
 typedef struct ecp_type2_spherical_factor_entry_tag {
@@ -89,8 +92,9 @@ typedef struct ecp_type2_radial_integral_database_tag {
     double gr0, gr1, g0, g1, gc; /* The parameters. */
     double tol; /* The error tolerance. */
     size_t n; /* The number of the entries. */
-    size_t_array_t o; /* The sorted indices of the entries. */
-    ecp_type2_radial_integral_array_t a; /* The entries. */
+    size_t_array_t h; /* The hash table. [HASH_TABLE_SIZE] */
+    size_t_array_t c; /* The next conflicted entry. [n] */
+    ecp_type2_radial_integral_array_t a; /* The entries. [n] */
     double_array_t w; /* The work array. */
 } ecp_type2_radial_integral_database_t;
 

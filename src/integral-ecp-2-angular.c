@@ -25,11 +25,14 @@
 #include "integral-ecp-2.h"
 
 #include <stdlib.h>
-#include <string.h>
 #include <assert.h>
 
 #ifndef ARRAY_INIT_ALLOC
 #define ARRAY_INIT_ALLOC 16
+#endif
+
+#ifndef HASH_TABLE_SIZE
+#define HASH_TABLE_SIZE 0x1000 /* must be a power of 2 */
 #endif
 
 #define D_4PI 12.566370614359172953850573533118
@@ -195,78 +198,77 @@ void gtoint__ecp_type2_angular_integral_array__compact(ecp_type2_angular_integra
 
 /*== ecp_type2_angular_integral_database_t ==*/
 
-inline static int compare_indices_(const ecp_type2_angular_integral_index_t *a, const ecp_type2_angular_integral_index_t *b) {
-    if (a->k.x > b->k.x) return 1;
-    if (a->k.x < b->k.x) return -1;
-    if (a->k.y > b->k.y) return 1;
-    if (a->k.y < b->k.y) return -1;
-    if (a->k.z > b->k.z) return 1;
-    if (a->k.z < b->k.z) return -1;
-    if (a->l[0] > b->l[0]) return 1;
-    if (a->l[0] < b->l[0]) return -1;
-    if (a->l[1] > b->l[1]) return 1;
-    if (a->l[1] < b->l[1]) return -1;
-    return 0;
+inline static bool equals_(const ecp_type2_angular_integral_index_t *a, const ecp_type2_angular_integral_index_t *b) {
+    if (a->k.x != b->k.x) return false;
+    if (a->k.y != b->k.y) return false;
+    if (a->k.z != b->k.z) return false;
+    if (a->l[0] != b->l[0]) return false;
+    if (a->l[1] != b->l[1]) return false;
+    return true;
+}
+
+inline static int hash_(const ecp_type2_angular_integral_index_t *a) {
+    return
+        a->k.x + 7 * (
+        a->k.y + 7 * (
+        a->k.z + 7 * (
+        a->l[0] + 7 * (
+        a->l[1]))));
 }
 
 inline static bool ecp_type2_angular_integral_database__find_entry_(const ecp_type2_angular_integral_database_t *obj, const ecp_type2_angular_integral_index_t *index, size_t *out) {
-    if (obj->n <= 0) { *out = 0; return false; }
-    size_t min = 0;
-    size_t max = obj->n - 1;
-    for (;;) {
-        const size_t mid = min + ((max - min) >> 1);
-        const int c = compare_indices_(index, &(obj->a.p[obj->o.p[mid]].i));
-        if (c > 0) {
-            if (min == mid) { *out = min + 1; return false; }
-            min = mid + 1;
-        }
-        else if (c < 0) {
-            if (min == mid) { *out = min; return false; }
-            max = mid - 1;
-        }
-        else {
-            *out = mid;
+    const size_t h = (size_t)hash_(index) & (obj->h.n - 1);
+    for (size_t i = obj->h.p[h]; i != DATABASE_VOID_INDEX; i = obj->c.p[i]) {
+        if (equals_(&(obj->a.p[i].i), index)) {
+            *out = i;
             return true;
         }
     }
+    *out = h;
+    return false;
 }
 
 void gtoint__ecp_type2_angular_integral_database__initialize(ecp_type2_angular_integral_database_t *obj) {
     obj->n = 0;
-    gtoint__size_t_array__initialize(&(obj->o));
+    gtoint__size_t_array__initialize(&(obj->h));
+    gtoint__size_t_array__initialize(&(obj->c));
     gtoint__ecp_type2_angular_integral_array__initialize(&(obj->a));
 }
 
 void gtoint__ecp_type2_angular_integral_database__finalize(ecp_type2_angular_integral_database_t *obj) {
-    gtoint__size_t_array__finalize(&(obj->o));
+    gtoint__size_t_array__finalize(&(obj->h));
+    gtoint__size_t_array__finalize(&(obj->c));
     gtoint__ecp_type2_angular_integral_array__finalize(&(obj->a));
 }
 
 void gtoint__ecp_type2_angular_integral_database__clear(ecp_type2_angular_integral_database_t *obj) {
     obj->n = 0;
-    gtoint__size_t_array__resize(&(obj->o), 0);
+    gtoint__size_t_array__resize(&(obj->h), 0);
+    gtoint__size_t_array__resize(&(obj->c), 0);
     gtoint__ecp_type2_angular_integral_array__resize(&(obj->a), 0);
 }
 
 bool gtoint__ecp_type2_angular_integral_database__fetch(
     ecp_type2_angular_integral_database_t *obj, spherical_harmonics_database_t *sph, const ecp_type2_angular_integral_index_t *index, double_array_t *out
 ) {
-    size_t m, k;
-    if (ecp_type2_angular_integral_database__find_entry_(obj, index, &m)) {
-        k = obj->o.p[m];
+    if (obj->h.n <= 0) {
+        if (!gtoint__size_t_array__resize(&(obj->h), HASH_TABLE_SIZE)) return false;
+        for (size_t i = 0; i < obj->h.n; i++) obj->h.p[i] = DATABASE_VOID_INDEX;
     }
-    else {
-        k = obj->n;
-        if (!gtoint__size_t_array__resize(&(obj->o), obj->n + 1)) return false;
+    size_t i;
+    if (!ecp_type2_angular_integral_database__find_entry_(obj, index, &i)) {
+        const size_t h = i;
+        i = obj->n;
+        if (!gtoint__size_t_array__resize(&(obj->c), obj->n + 1)) return false;
         if (!gtoint__ecp_type2_angular_integral_array__resize(&(obj->a), obj->n + 1)) return false;
-        if (!ecp_type2_angular_integral_entry__compute_(&(obj->a.p[k]), sph, index)) return false;
+        if (!ecp_type2_angular_integral_entry__compute_(&(obj->a.p[i]), sph, index)) return false;
         obj->n++;
-        memmove(obj->o.p + m + 1, obj->o.p + m, sizeof(size_t) * (obj->o.n - m - 1));
-        obj->o.p[m] = k;
-        obj->a.p[k].i = *index;
+        obj->a.p[i].i = *index;
+        obj->c.p[i] = obj->h.p[h];
+        obj->h.p[h] = i;
     }
     if (out) {
-        if (!gtoint__double_array__copy(out, &(obj->a.p[k].v))) return false;
+        if (!gtoint__double_array__copy(out, &(obj->a.p[i].v))) return false;
     }
     return true;
 }
@@ -274,26 +276,29 @@ bool gtoint__ecp_type2_angular_integral_database__fetch(
 bool gtoint__ecp_type2_angular_integral_database__index(
     ecp_type2_angular_integral_database_t *obj, spherical_harmonics_database_t *sph, const ecp_type2_angular_integral_index_t *index, size_t *out
 ) {
-    size_t m, k;
-    if (ecp_type2_angular_integral_database__find_entry_(obj, index, &m)) {
-        k = obj->o.p[m];
+    if (obj->h.n <= 0) {
+        if (!gtoint__size_t_array__resize(&(obj->h), HASH_TABLE_SIZE)) return false;
+        for (size_t i = 0; i < obj->h.n; i++) obj->h.p[i] = DATABASE_VOID_INDEX;
     }
-    else {
-        k = obj->n;
-        if (!gtoint__size_t_array__resize(&(obj->o), obj->n + 1)) return false;
+    size_t i;
+    if (!ecp_type2_angular_integral_database__find_entry_(obj, index, &i)) {
+        const size_t h = i;
+        i = obj->n;
+        if (!gtoint__size_t_array__resize(&(obj->c), obj->n + 1)) return false;
         if (!gtoint__ecp_type2_angular_integral_array__resize(&(obj->a), obj->n + 1)) return false;
-        if (!ecp_type2_angular_integral_entry__compute_(&(obj->a.p[k]), sph, index)) return false;
+        if (!ecp_type2_angular_integral_entry__compute_(&(obj->a.p[i]), sph, index)) return false;
         obj->n++;
-        memmove(obj->o.p + m + 1, obj->o.p + m, sizeof(size_t) * (obj->o.n - m - 1));
-        obj->o.p[m] = k;
-        obj->a.p[k].i = *index;
+        obj->a.p[i].i = *index;
+        obj->c.p[i] = obj->h.p[h];
+        obj->h.p[h] = i;
     }
-    if (out) *out = k;
+    if (out) *out = i;
     return true;
 }
 
 bool gtoint__ecp_type2_angular_integral_database__copy(ecp_type2_angular_integral_database_t *obj, const ecp_type2_angular_integral_database_t *src) {
-    if (!gtoint__size_t_array__copy(&(obj->o), &(src->o))) return false;
+    if (!gtoint__size_t_array__copy(&(obj->h), &(src->h))) return false;
+    if (!gtoint__size_t_array__copy(&(obj->c), &(src->c))) return false;
     if (!gtoint__ecp_type2_angular_integral_array__copy(&(obj->a), &(src->a))) return false;
     obj->n = src->n;
     return true;
@@ -306,6 +311,7 @@ void gtoint__ecp_type2_angular_integral_database__move(ecp_type2_angular_integra
 }
 
 void gtoint__ecp_type2_angular_integral_database__compact(ecp_type2_angular_integral_database_t *obj) {
-    gtoint__size_t_array__compact(&(obj->o));
+    gtoint__size_t_array__compact(&(obj->h));
+    gtoint__size_t_array__compact(&(obj->c));
     gtoint__ecp_type2_angular_integral_array__compact(&(obj->a));
 }

@@ -43,7 +43,7 @@ typedef struct cache_index_array_tag {
 typedef struct cache_tag {
     size_t l; /* The number of the contract combinations. */
     size_t n; /* The number of the entries. */
-    size_t_array_t h; /* The hash table. [CACHE_TABLE_SIZE] */
+    size_t_array_t h; /* The hash table. [HASH_TABLE_SIZE] */
     size_t_array_t c; /* The next conflicted entry. [n] */
     cache_index_array_t i; /* The integral indices. [n] */
     double_array_t v; /* The integral values. [n][l] */

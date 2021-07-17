@@ -31,8 +31,8 @@
 #define ARRAY_INIT_ALLOC 16
 #endif
 
-#ifndef CACHE_TABLE_SIZE
-#define CACHE_TABLE_SIZE 0x1000 /* must be a power of 2 */
+#ifndef HASH_TABLE_SIZE
+#define HASH_TABLE_SIZE 0x1000 /* must be a power of 2 */
 #endif
 
 /*== cache_index_array_t ==*/
@@ -131,13 +131,13 @@ void gtoint__cache__clear(cache_t *obj) {
 }
 
 bool gtoint__cache__reset(cache_t *obj, size_t ncc) {
-    if (!gtoint__size_t_array__resize(&(obj->h), CACHE_TABLE_SIZE)) return false;
+    if (!gtoint__size_t_array__resize(&(obj->h), HASH_TABLE_SIZE)) return false;
+    obj->l = ncc;
+    obj->n = 0;
     gtoint__size_t_array__resize(&(obj->c), 0);
     gtoint__cache_index_array__resize(&(obj->i), 0);
     gtoint__double_array__resize(&(obj->v), 0);
     for (size_t i = 0; i < obj->h.n; i++) obj->h.p[i] = CACHE_VOID_INDEX;
-    obj->l = ncc;
-    obj->n = 0;
     return true;
 }
 
