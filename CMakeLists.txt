@@ -32,18 +32,23 @@ function(add_common_compile_options target)
         $<$<COMPILE_LANGUAGE:C>:
             $<$<C_COMPILER_ID:GNU>:
                 -Wall -Wextra -Wno-unused-parameter -Wno-misleading-indentation -pedantic -Werror
+                $<$<CONFIG:Release>:-ffast-math>
             >
             $<$<C_COMPILER_ID:Clang>:
                 -Wall -Wextra -Wno-unused-parameter -pedantic -Werror
+                $<$<CONFIG:Release>:-ffast-math>
             >
             $<$<AND:$<C_COMPILER_ID:Intel>,$<NOT:$<PLATFORM_ID:Windows>>>:
                 -Wall -Wextra -Wno-unused-parameter -pedantic -Werror
+                $<$<CONFIG:Release>:-fp-model fast>
             >
             $<$<C_COMPILER_ID:MSVC>:
                 /W4 /WX /wd4100 /wd4706
+                $<$<CONFIG:Release>:/fp:fast>
             >
             $<$<AND:$<C_COMPILER_ID:Intel>,$<PLATFORM_ID:Windows>>:
                 /W4 /WX
+                $<$<CONFIG:Release>:/fp:fast>
             >
         >
         $<$<COMPILE_LANGUAGE:Fortran>:

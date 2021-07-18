@@ -400,6 +400,7 @@ int main(int argc, char **argv) {
         }
     };
     int r = 0;
+    printf("[Single]\n");
     for (int j = 0; j <= 40; j++) {
         printf("n = %3d: ", j - 20);
         for (int i = 0; i <= 40; i++) {
@@ -415,5 +416,28 @@ int main(int argc, char **argv) {
         }
         printf("\n");
     }
+#define N 1111
+    printf("[Batch]\n");
+    for (int j = 0; j <= 40; j++) {
+        printf("n = %3d: ", j - 20);
+        double x[N], e[N], v[N];
+        for (int i = 0; i < N; i++) {
+            x[i] = exp2((i % 41) - 32);
+            e[i] = -1.0;
+        }
+        gtoint__compute_modified_spherical_bessel_function_first_kind_batch(j - 20, N, x, e, v);
+        for (int i = 0; i < N; i++) {
+            const double w = ref[j][i % 41] * exp(-1.0);
+            if (fabs(v[i] - w) <= fmax(1e-100, 1e-6 * fabs(w))) {
+                printf(".");
+            }
+            else {
+                printf("(%.18e!=%.18e)", v[i], w);
+                r = 1;
+            }
+        }
+        printf("\n");
+    }
+#undef N
     return r;
 }

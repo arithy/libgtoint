@@ -52,6 +52,7 @@
 #define A 7.0
 #define L_MIN 5
 #define L_MAX 12
+#define N_MAX ((1 << L_MAX) - 1)
 
 #define D_RPI    1.7724538509055160272981674833411  /* sqrt(PI) */
 #define D_RPID2  1.2533141373155002512078826424055  /* sqrt(PI/2) */
@@ -78,7 +79,7 @@ static void compute_quadrature_table_(void) {
             g_x_[i++] = (double)(2 * k + 1) / (2 * m);
         }
     }
-    for (int i = 0; i < (1 << L_MAX) - 1; i++) {
+    for (int i = 0; i < N_MAX; i++) {
         const double x = g_x_[i];
         g_r_[i] = -A * log(1.0 - x * x * x);
     }
@@ -132,7 +133,7 @@ inline static double power_scaled_(double a, int b, double s) {
 
 static void ecp_type2_radial_integral_entry__compute_(
     ecp_type2_radial_integral_entry_t *obj, const ecp_type2_radial_integral_index_t *index,
-    double gr0, double gr1, double g0, double g1, double gc, double tol, double *wrk
+    double gr0, double gr1, double g0, double g1, double gc, double tol, double *w_x, double *w_e, double *w_v, double *w_w
 ) {
     obj->i = *index;
     if (gr0 > 0.0 && gr1 > 0.0) {
@@ -143,12 +144,24 @@ static void ecp_type2_radial_integral_entry__compute_(
             for (int i = n0; i < n; i++) {
                 const double r = g_r_[i];
                 const double r2 = r * r;
-                wrk[i] = power_scaled_(r, index->k, exp(-gc * r2)) *
-                    gtoint__compute_modified_spherical_bessel_function_first_kind(index->l[0], gr0 * r, -g0 * r2) *
-                    gtoint__compute_modified_spherical_bessel_function_first_kind(index->l[1], gr1 * r, -g1 * r2);
+                w_w[i] = power_scaled_(r, index->k, exp(-gc * r2));
+                w_x[i] = gr0 * r;
+                w_e[i] = -g0 * r2;
+            }
+            gtoint__compute_modified_spherical_bessel_function_first_kind_batch(index->l[0], n - n0, w_x + n0, w_e + n0, w_v + n0);
+            for (int i = n0; i < n; i++) {
+                const double r = g_r_[i];
+                const double r2 = r * r;
+                w_w[i] *= w_v[i];
+                w_x[i] = gr1 * r;
+                w_e[i] = -g1 * r2;
+            }
+            gtoint__compute_modified_spherical_bessel_function_first_kind_batch(index->l[1], n - n0, w_x + n0, w_e + n0, w_v + n0);
+            for (int i = n0; i < n; i++) {
+                w_w[i] *= w_v[i];
             }
             double v = 0.0;
-            for (int i = 0; i < n; i++) v += g_w_[j][i] * wrk[i];
+            for (int i = 0; i < n; i++) v += g_w_[j][i] * w_w[i];
             if (n0 > 0) {
                 if (isnan(v) || isinf(v) || fabs(v - v0) <= fabs(v0) * tol) { v0 = v; break; }
             }
@@ -165,11 +178,16 @@ static void ecp_type2_radial_integral_entry__compute_(
             for (int i = n0; i < n; i++) {
                 const double r = g_r_[i];
                 const double r2 = r * r;
-                wrk[i] = power_scaled_(r, index->k, exp(-(g1 + gc) * r2)) *
-                    gtoint__compute_modified_spherical_bessel_function_first_kind(index->l[0], gr0 * r, -g0 * r2);
+                w_w[i] = power_scaled_(r, index->k, exp(-(g1 + gc) * r2));
+                w_x[i] = gr0 * r;
+                w_e[i] = -g0 * r2;
+            }
+            gtoint__compute_modified_spherical_bessel_function_first_kind_batch(index->l[0], n - n0, w_x + n0, w_e + n0, w_v + n0);
+            for (int i = n0; i < n; i++) {
+                w_w[i] *= w_v[i];
             }
             double v = 0.0;
-            for (int i = 0; i < n; i++) v += g_w_[j][i] * wrk[i];
+            for (int i = 0; i < n; i++) v += g_w_[j][i] * w_w[i];
             if (n0 > 0) {
                 if (isnan(v) || isinf(v) || fabs(v - v0) <= fabs(v0) * tol) { v0 = v; break; }
             }
@@ -186,11 +204,16 @@ static void ecp_type2_radial_integral_entry__compute_(
             for (int i = n0; i < n; i++) {
                 const double r = g_r_[i];
                 const double r2 = r * r;
-                wrk[i] = power_scaled_(r, index->k, exp(-(g0 + gc) * r2)) *
-                    gtoint__compute_modified_spherical_bessel_function_first_kind(index->l[1], gr1 * r, -g1 * r2);
+                w_w[i] = power_scaled_(r, index->k, exp(-(g0 + gc) * r2));
+                w_x[i] = gr1 * r;
+                w_e[i] = -g1 * r2;
+            }
+            gtoint__compute_modified_spherical_bessel_function_first_kind_batch(index->l[1], n - n0, w_x + n0, w_e + n0, w_v + n0);
+            for (int i = n0; i < n; i++) {
+                w_w[i] *= w_v[i];
             }
             double v = 0.0;
-            for (int i = 0; i < n; i++) v += g_w_[j][i] * wrk[i];
+            for (int i = 0; i < n; i++) v += g_w_[j][i] * w_w[i];
             if (n0 > 0) {
                 if (isnan(v) || isinf(v) || fabs(v - v0) <= fabs(v0) * tol) { v0 = v; break; }
             }
@@ -356,9 +379,10 @@ bool gtoint__ecp_type2_radial_integral_database__fetch(ecp_type2_radial_integral
         i = obj->n;
         if (!gtoint__size_t_array__resize(&(obj->c), obj->n + 1)) return false;
         if (!gtoint__ecp_type2_radial_integral_array__resize(&(obj->a), obj->n + 1)) return false;
-        if (!gtoint__double_array__resize(&(obj->w), (1 << L_MAX) - 1)) return false;
+        if (!gtoint__double_array__resize(&(obj->w), N_MAX * 4)) return false;
         ecp_type2_radial_integral_entry__compute_(
-            &(obj->a.p[i]), index, obj->gr0, obj->gr1, obj->g0, obj->g1, obj->gc, obj->tol, obj->w.p
+            &(obj->a.p[i]), index, obj->gr0, obj->gr1, obj->g0, obj->g1, obj->gc, obj->tol,
+            obj->w.p, obj->w.p + N_MAX, obj->w.p + N_MAX * 2, obj->w.p + N_MAX * 3
         );
         obj->n++;
         obj->a.p[i].i = *index;

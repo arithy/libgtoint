@@ -37,6 +37,7 @@ double gtoint__compute_spherical_harmonics_normalization_constant(int a, double 
 double gtoint__compute_boys_function(int m, double x, double tol);
 
 double gtoint__compute_modified_spherical_bessel_function_first_kind(int n, double x, double e); /* scaled by exp(e) */
+void gtoint__compute_modified_spherical_bessel_function_first_kind_batch(int n, size_t m, const double *x, const double *e, double *v); /* batch version */
 
 #ifdef __cplusplus
 }
