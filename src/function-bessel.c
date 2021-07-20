@@ -31,7 +31,7 @@
 #define VL 256
 #endif
 
-#define K 18
+#define K 25
 
 inline static double power_factorial_half_shifted_(double a, int n) {
     double v = 0.5;
