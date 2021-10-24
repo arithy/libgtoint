@@ -4,7 +4,7 @@
 
 **LibGtoint** is an analytical GTO (Gaussian type orbital) integral library for C and Fortran.
 
-> *Firstly note that this library is not fast and currently it is just an implementation for study. It would be much appreciated if you could share your expertise on more efficient implementation by [Issues](https://github.com/arithy/libgtoint/issues), [Pull Requests](https://github.com/arithy/libgtoint/pulls), or [Wiki](https://libgtoint.miraheze.org/wiki/).*
+> *Firstly note that this library is not fast and currently it is just an implementation for study. It would be much appreciated if you could share your expertise on more efficient implementation by [Issues](https://github.com/arithy/libgtoint/issues), [Pull Requests](https://github.com/arithy/libgtoint/pulls), or [Wiki](https://arithy.org/libgtoint/wiki/).*
 
 Its main features are as follows:
 - Supports Cartesian GTOs and spherical GTOs,
@@ -659,7 +659,7 @@ p-d potential
 0     49.4045600              4.1373700
 2     11.4018300             82.7369600
 ```
-we can construct the basis shells and the ECP shells by the code shown below.
+we can construct the basis shells and the ECP shells by the code shown below:
 - C
     ```c
     gtoint_error_t e = GTOINT_ERROR_OK;
@@ -989,7 +989,9 @@ we can construct the basis shells and the ECP shells by the code shown below.
     end if
     ```
 
-We must destroy the basis shells and the ECP shells after their use by the code shown below.
+Then, we can compute several types of integrals among the basis shells.
+
+We must destroy the basis shells and the ECP shells after their use by the code shown below:
 - C
     ```c
     gtoint_ecp_shell_destroy(ecp[4]);
