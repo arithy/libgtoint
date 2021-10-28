@@ -171,7 +171,32 @@ The integrator must be disposed by using the following function or routine when 
     ```
 
 **Argument**
-- `itg`: the integrator to be disposed
+- `itg`: the integrator to be disposed; nothing is done if `GTOINT_NULL` (in C) or `c_null_ptr` (in Fortran)
+
+### Duplicate of an integrator ###
+
+The integrator can be duplicated by using the following function or routine.
+
+- C
+    ```c
+    gtoint_error_t gtoint_integrator_copy(gtoint_integrator_t *itg, gtoint_integrator_t src);
+    ```
+- Fortran
+    ```f90
+    subroutine gtoint_integrator_copy(itg, src, err)
+       type(C_PTR), intent(out) :: itg
+       type(C_PTR), intent(in) :: src
+       integer(C_INT), intent(out) :: err
+    end subroutine
+    ```
+
+**Argument**
+- `itg`: the integrator to be created by copying
+- `src`: the integrator to be copied
+- `err`: the error code (only Fortran)
+
+**Return Value**
+- the error code (only C)
 
 ### Cleanup of work memory ###
 
@@ -344,7 +369,32 @@ The basis functions must be destroyed by using the following function or routine
     ```
 
 **Argument**
-- `bas`: the basis shell to be destroyed
+- `bas`: the basis shell to be destroyed; nothing is done if `GTOINT_NULL` (in C) or `c_null_ptr` (in Fortran)
+
+### Copy of basis functions ###
+
+The basis functions can be copied using the following function or routine.
+
+- C
+    ```c
+    gtoint_error_t gtoint_basis_shell_copy(gtoint_basis_shell_t *bas, gtoint_basis_shell_t src);
+    ```
+- Fortran
+    ```f90
+    subroutine gtoint_basis_shell_copy(bas, src, err)
+       type(C_PTR), intent(out) :: bas
+       type(C_PTR), intent(in) :: src
+       integer(C_INT), intent(out) :: err
+    end subroutine
+    ```
+
+**Arguments**
+- `bas`: the basis shell to be created by copying
+- `src`: the basis shell to be copied
+- `err`: the error code (only Fortran)
+
+**Return Value**
+- the error code (only C)
 
 ### Count of basis functions ###
 
@@ -425,7 +475,32 @@ The ECP must be destroyed by using the following function or routine when it is 
     ```
 
 **Argument**
-- `ecp`: the ECP shell to be destroyed
+- `ecp`: the ECP shell to be destroyed; nothing is done if `GTOINT_NULL` (in C) or `c_null_ptr` (in Fortran)
+
+### Copy of scalar ECP ###
+
+The scalar ECP can be copied using the following function or routine.
+
+- C
+    ```c
+    gtoint_error_t gtoint_ecp_shell_copy(gtoint_ecp_shell_t *ecp, gtoint_ecp_shell_t src);
+    ```
+- Fortran
+    ```f90
+    subroutine gtoint_ecp_shell_copy(ecp, src, err)
+       type(C_PTR), intent(out) :: ecp
+       type(C_PTR), intent(in) :: src
+       integer(C_INT), intent(out) :: err
+    end subroutine
+    ```
+
+**Arguments**
+- `ecp`: the ECP shell to be created by copying
+- `src`: the ECP shell to be copied
+- `err`: the error code (only Fortran)
+
+**Return Value**
+- the error code (only C)
 
 ### Computation of integrals ###
 

@@ -117,7 +117,7 @@ ERROR:;
 }
 
 void gtoint_basis_shell_destroy(gtoint_basis_shell_t bas) {
-    if (!bas) return;
+    if (bas == GTOINT_NULL) return;
     gtoint__int_array__finalize(&(bas->spec.azim));
     gtoint__int3_array__finalize(&(bas->spec.mom));
     gtoint__spherical_harmonics_array__finalize(&(bas->spec.sph));
@@ -128,6 +128,46 @@ void gtoint_basis_shell_destroy(gtoint_basis_shell_t bas) {
     free(bas);
 }
 
+gtoint_error_t gtoint_basis_shell_copy(gtoint_basis_shell_t *bas, gtoint_basis_shell_t src) {
+    struct gtoint_basis_shell_tag *const p = (struct gtoint_basis_shell_tag *)malloc(sizeof(struct gtoint_basis_shell_tag));
+    if (p == NULL) return GTOINT_ERROR_MEMORY;
+    gtoint__int_array__initialize(&(p->spec.azim));
+    gtoint__int3_array__initialize(&(p->spec.mom));
+    gtoint__spherical_harmonics_array__initialize(&(p->spec.sph));
+    gtoint__size_t_array__initialize(&(p->spec.i.m));
+    gtoint__size_t_array__initialize(&(p->spec.i.b));
+    gtoint__double_array__initialize(&(p->prim.expo));
+    gtoint__double_array__initialize(&(p->prim.coef));
+    if (!gtoint__int_array__copy(&(p->spec.azim), &(src->spec.azim))) goto ERROR;
+    if (!gtoint__int3_array__copy(&(p->spec.mom), &(src->spec.mom))) goto ERROR;
+    if (!gtoint__spherical_harmonics_array__copy(&(p->spec.sph), &(src->spec.sph))) goto ERROR;
+    if (!gtoint__size_t_array__copy(&(p->spec.i.m), &(src->spec.i.m))) goto ERROR;
+    if (!gtoint__size_t_array__copy(&(p->spec.i.b), &(src->spec.i.b))) goto ERROR;
+    if (!gtoint__double_array__copy(&(p->prim.expo), &(src->prim.expo))) goto ERROR;
+    if (!gtoint__double_array__copy(&(p->prim.coef), &(src->prim.coef))) goto ERROR;
+    p->spec.n = src->spec.n;
+    p->prim.n = src->prim.n;
+    *bas = p;
+    return GTOINT_ERROR_OK;
+
+ERROR:;
+    gtoint_basis_shell_destroy(p);
+    return GTOINT_ERROR_MEMORY;
+}
+
 int gtoint_basis_shell_get_count(gtoint_basis_shell_t bas) {
     return (int)bas->spec.i.b.p[bas->spec.n];
+}
+
+const int *gtoint_basis_shell_get_angular_numbers(gtoint_basis_shell_t bas, int *na) {
+    if (na) *na = (int)bas->spec.azim.n;
+    return bas->spec.azim.p;
+}
+
+int gtoint_basis_shell_get_angular_number_count_f(gtoint_basis_shell_t bas) { /* for Fortran */
+    return (int)bas->spec.azim.n;
+}
+
+int gtoint_basis_shell_get_angular_number_f(gtoint_basis_shell_t bas, int index) { /* for Fortran */
+    return bas->spec.azim.p[index];
 }

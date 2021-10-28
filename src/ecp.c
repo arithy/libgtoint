@@ -49,8 +49,30 @@ ERROR:;
 }
 
 void gtoint_ecp_shell_destroy(gtoint_ecp_shell_t ecp) {
-    if (!ecp) return;
+    if (ecp == GTOINT_NULL) return;
     gtoint__double_array__finalize(&(ecp->prim.expo));
     gtoint__double_array__finalize(&(ecp->prim.coef));
     free(ecp);
+}
+
+gtoint_error_t gtoint_ecp_shell_copy(gtoint_ecp_shell_t *ecp, gtoint_ecp_shell_t src) {
+    struct gtoint_ecp_shell_tag *const p = (struct gtoint_ecp_shell_tag *)malloc(sizeof(struct gtoint_ecp_shell_tag));
+    if (p == NULL) return GTOINT_ERROR_MEMORY;
+    gtoint__double_array__initialize(&(p->prim.expo));
+    gtoint__double_array__initialize(&(p->prim.coef));
+    if (!gtoint__double_array__copy(&(p->prim.expo), &(src->prim.expo))) goto ERROR;
+    if (!gtoint__double_array__copy(&(p->prim.coef), &(src->prim.coef))) goto ERROR;
+    p->prim.n = src->prim.n;
+    p->azim = src->azim;
+    p->rpow = src->rpow;
+    *ecp = p;
+    return GTOINT_ERROR_OK;
+
+ERROR:;
+    gtoint_ecp_shell_destroy(p);
+    return GTOINT_ERROR_MEMORY;
+}
+
+int gtoint_ecp_shell_get_angular_number(gtoint_ecp_shell_t ecp) {
+    return ecp->azim;
 }

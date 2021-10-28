@@ -59,6 +59,22 @@ contains
       call c_gtoint_integrator_destroy(itg)
    end subroutine
 
+   subroutine gtoint_integrator_copy(itg, src, err)
+      type(C_PTR), intent(out) :: itg
+      type(C_PTR), intent(in) :: src
+      integer(C_INT), intent(out) :: err
+      interface
+         function c_gtoint_integrator_copy(itg, src) &
+               & bind(c, name = 'gtoint_integrator_copy')
+            import C_PTR, C_INT
+            type(C_PTR), intent(out) :: itg
+            type(C_PTR), value :: src
+            integer(C_INT) :: c_gtoint_integrator_copy
+         end function
+      end interface
+      err = c_gtoint_integrator_copy(itg, src)
+   end subroutine
+
    subroutine gtoint_integrator_cleanup_memory(itg)
       type(C_PTR), intent(in) :: itg
       interface
@@ -167,6 +183,22 @@ contains
       call c_gtoint_basis_shell_destroy(bas)
    end subroutine
 
+   subroutine gtoint_basis_shell_copy(bas, src, err)
+      type(C_PTR), intent(out) :: bas
+      type(C_PTR), intent(in) :: src
+      integer(C_INT), intent(out) :: err
+      interface
+         function c_gtoint_basis_shell_copy(bas, src) &
+               & bind(c, name = 'gtoint_basis_shell_copy')
+            import C_PTR, C_INT
+            type(C_PTR), intent(out) :: bas
+            type(C_PTR), value :: src
+            integer(C_INT) :: c_gtoint_basis_shell_copy
+         end function
+      end interface
+      err = c_gtoint_basis_shell_copy(bas, src)
+   end subroutine
+
    subroutine gtoint_basis_shell_get_count(bas, nb)
       type(C_PTR), intent(in) :: bas
       integer, intent(out) :: nb
@@ -179,6 +211,36 @@ contains
          end function
       end interface
       nb = c_gtoint_basis_shell_get_count(bas)
+   end subroutine
+
+   subroutine gtoint_basis_shell_get_angular_number_count(bas, na)
+      type(C_PTR), intent(in) :: bas
+      integer, intent(out) :: na
+      interface
+         function c_gtoint_basis_shell_get_angular_number_count_f(bas) &
+               & bind(c, name = 'gtoint_basis_shell_get_angular_number_count_f')
+            import C_PTR, C_INT
+            type(C_PTR), value :: bas
+            integer(C_INT) :: c_gtoint_basis_shell_get_angular_number_count_f
+         end function
+      end interface
+      na = c_gtoint_basis_shell_get_angular_number_count_f(bas)
+   end subroutine
+
+   subroutine gtoint_basis_shell_get_angular_number(bas, i, a)
+      type(C_PTR), intent(in) :: bas
+      integer, intent(in) :: i
+      integer(C_INT), intent(out) :: a
+      interface
+         function c_gtoint_basis_shell_get_angular_number_f(bas, i) &
+               & bind(c, name = 'gtoint_basis_shell_get_angular_number_f')
+            import C_PTR, C_INT
+            type(C_PTR), value :: bas
+            integer(C_INT), value :: i
+            integer(C_INT) :: c_gtoint_basis_shell_get_angular_number_f
+         end function
+      end interface
+      a = c_gtoint_basis_shell_get_angular_number_f(bas, i)
    end subroutine
 
    subroutine gtoint_ecp_shell_create(ecp, itg, a, r, ng, g, c, err)
@@ -217,6 +279,36 @@ contains
          end subroutine
       end interface
       call c_gtoint_ecp_shell_destroy(ecp)
+   end subroutine
+
+   subroutine gtoint_ecp_shell_copy(ecp, src, err)
+      type(C_PTR), intent(out) :: ecp
+      type(C_PTR), intent(in) :: src
+      integer(C_INT), intent(out) :: err
+      interface
+         function c_gtoint_ecp_shell_copy(ecp, src) &
+               & bind(c, name = 'gtoint_ecp_shell_copy')
+            import C_PTR, C_INT
+            type(C_PTR), intent(out) :: ecp
+            type(C_PTR), value :: src
+            integer(C_INT) :: c_gtoint_ecp_shell_copy
+         end function
+      end interface
+      err = c_gtoint_ecp_shell_copy(ecp, src)
+   end subroutine
+
+   subroutine gtoint_ecp_shell_get_angular_number(bas, a)
+      type(C_PTR), intent(in) :: bas
+      integer(C_INT), intent(out) :: a
+      interface
+         function c_gtoint_ecp_shell_get_angular_number(bas) &
+               & bind(c, name = 'gtoint_ecp_shell_get_angular_number')
+            import C_PTR, C_INT
+            type(C_PTR), value :: bas
+            integer(C_INT) :: c_gtoint_ecp_shell_get_angular_number
+         end function
+      end interface
+      a = c_gtoint_ecp_shell_get_angular_number(bas)
    end subroutine
 
    subroutine gtoint_compute_overlap_integrals &

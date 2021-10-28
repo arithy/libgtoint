@@ -31,6 +31,7 @@ gtoint_error_t gtoint_integrator_create(gtoint_integrator_t *itg) {
     if (p == NULL) return GTOINT_ERROR_MEMORY;
     p->tol = 1e-10;
     p->cut = 1e-15;
+    p->ecp.r.tol = p->tol;
     gtoint__spherical_harmonics_database__initialize(&(p->h));
     gtoint__stack__initialize(&(p->s));
     gtoint__cache__initialize(&(p->c));
@@ -42,13 +43,12 @@ gtoint_error_t gtoint_integrator_create(gtoint_integrator_t *itg) {
     gtoint__ecp_type2_spherical_factor_database__initialize(&(p->ecp.s[0]));
     gtoint__ecp_type2_spherical_factor_database__initialize(&(p->ecp.s[1]));
     gtoint__ecp_type2_radial_integral_database__initialize(&(p->ecp.r));
-    p->ecp.r.tol = p->tol;
     *itg = p;
     return GTOINT_ERROR_OK;
 }
 
 void gtoint_integrator_destroy(gtoint_integrator_t itg) {
-    if (!itg) return;
+    if (itg == GTOINT_NULL) return;
     gtoint__spherical_harmonics_database__finalize(&(itg->h));
     gtoint__stack__finalize(&(itg->s));
     gtoint__cache__finalize(&(itg->c));
@@ -60,6 +60,34 @@ void gtoint_integrator_destroy(gtoint_integrator_t itg) {
     gtoint__ecp_type2_spherical_factor_database__finalize(&(itg->ecp.s[1]));
     gtoint__ecp_type2_radial_integral_database__finalize(&(itg->ecp.r));
     free(itg);
+}
+
+gtoint_error_t gtoint_integrator_copy(gtoint_integrator_t *itg, gtoint_integrator_t src) {
+    struct gtoint_integrator_tag *const p = (struct gtoint_integrator_tag *)malloc(sizeof(struct gtoint_integrator_tag));
+    if (p == NULL) return GTOINT_ERROR_MEMORY;
+    p->tol = src->tol;
+    p->cut = src->cut;
+    p->ecp.r.tol = p->tol;
+    gtoint__spherical_harmonics_database__initialize(&(p->h));
+    gtoint__stack__initialize(&(p->s));
+    gtoint__cache__initialize(&(p->c));
+    gtoint__double_array__initialize(&(p->v));
+    gtoint__double_array__initialize(&(p->w));
+    gtoint__spherical_harmonics_database__initialize(&(p->ecp.h));
+    gtoint__spherical_harmonics_database__reset(&(p->ecp.h), false);
+    gtoint__ecp_type2_angular_integral_database__initialize(&(p->ecp.a));
+    gtoint__ecp_type2_spherical_factor_database__initialize(&(p->ecp.s[0]));
+    gtoint__ecp_type2_spherical_factor_database__initialize(&(p->ecp.s[1]));
+    gtoint__ecp_type2_radial_integral_database__initialize(&(p->ecp.r));
+    if (!gtoint__spherical_harmonics_database__copy(&(p->h), &(src->h))) goto ERROR;
+    if (!gtoint__spherical_harmonics_database__copy(&(p->ecp.h), &(src->ecp.h))) goto ERROR;
+    if (!gtoint__ecp_type2_angular_integral_database__copy(&(p->ecp.a), &(src->ecp.a))) goto ERROR;
+    *itg = p;
+    return GTOINT_ERROR_OK;
+
+ERROR:;
+    gtoint_integrator_destroy(p);
+    return GTOINT_ERROR_MEMORY;
 }
 
 void gtoint_integrator_cleanup_memory(gtoint_integrator_t itg) {

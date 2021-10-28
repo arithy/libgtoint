@@ -25,6 +25,8 @@
 #ifndef GTOINT_INCLUDED
 #define GTOINT_INCLUDED
 
+#define GTOINT_NULL ((void *)0)
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -51,6 +53,7 @@ typedef struct gtoint_ecp_shell_tag *gtoint_ecp_shell_t;
 
 gtoint_error_t gtoint_integrator_create(gtoint_integrator_t *itg);
 void gtoint_integrator_destroy(gtoint_integrator_t itg);
+gtoint_error_t gtoint_integrator_copy(gtoint_integrator_t *itg, gtoint_integrator_t src);
 void gtoint_integrator_cleanup_memory(gtoint_integrator_t itg);
 void gtoint_integrator_set_error_tolerance(gtoint_integrator_t itg, double tol);
 double gtoint_integrator_get_error_tolerance(gtoint_integrator_t itg);
@@ -62,13 +65,17 @@ gtoint_error_t gtoint_basis_shell_create(
     double sf, int na, const int *a, int ng, const double *g, const double *c
 );
 void gtoint_basis_shell_destroy(gtoint_basis_shell_t bas);
+gtoint_error_t gtoint_basis_shell_copy(gtoint_basis_shell_t *bas, gtoint_basis_shell_t src);
 int gtoint_basis_shell_get_count(gtoint_basis_shell_t bas);
+const int *gtoint_basis_shell_get_angular_numbers(gtoint_basis_shell_t bas, int *na);
 
 gtoint_error_t gtoint_ecp_shell_create(
     gtoint_ecp_shell_t *ecp, gtoint_integrator_t itg,
     int a, int r, int ng, const double *g, const double *c
 );
 void gtoint_ecp_shell_destroy(gtoint_ecp_shell_t ecp);
+gtoint_error_t gtoint_ecp_shell_copy(gtoint_ecp_shell_t *ecp, gtoint_ecp_shell_t src);
+int gtoint_ecp_shell_get_angular_number(gtoint_ecp_shell_t ecp);
 
 gtoint_error_t gtoint_compute_overlap_integrals(
     gtoint_integrator_t itg,
