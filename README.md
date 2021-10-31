@@ -675,9 +675,9 @@ The several kinds of integrals can be computed by using the following functions 
 - `nam`: the number of the multipole moments
 - `am`: the array of the multipole moments
 - `out`: the array of the integral values to be computed
-    - as for `gtoint_compute_electron_repulsion_integrals()`, the array dimensions are `[n0][n1][n2][n3][nd]` in C-style notation or `(nd,n3,n2,n1,n0)` in Fortran-style notation
-    - as for `gtoint_compute_multipole_moment_integrals()`, the array dimensions are `[n0][n1][nam][nd]` in C-style notation or `(nd,nam,n1,n0)` in Fortran-style notation
-    - as for the others, the array dimensions are `[n0][n1][nd]` in C-style notation or `(nd,n1,n0)` in Fortran-style notation
+    - as for `gtoint_compute_electron_repulsion_integrals()`, the array dimensions are `[nd][n3][n2][n1][n0]` in C-style notation or `(n0,n1,n2,n3,nd)` in Fortran-style notation
+    - as for `gtoint_compute_multipole_moment_integrals()`, the array dimensions are `[nd][nam][n1][n0]` in C-style notation or `(n0,n1,nam,nd)` in Fortran-style notation
+    - as for the others, the array dimensions are `[nd][n1][n0]` in C-style notation or `(n0,n1,nd)` in Fortran-style notation
     - here, `n0` is the number of the basis functions in the basis shell `bas0`, `n1` is the number of the basis functions in the basis shell `bas1`, and so on.
 - `err`: the error code (only Fortran)
 
