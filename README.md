@@ -1,6 +1,6 @@
-# LibGtoint #
+# LibGtoint
 
-## Overview ##
+## Overview
 
 **LibGtoint** is an analytical GTO (Gaussian type orbital) integral library for C and Fortran.
 
@@ -24,11 +24,11 @@ Currently, LibGtoint uses only Obara-Saika scheme.
 
 [*1]: As for ECP integrals, there is a limitation. For the details, see *Notice* in the section *API*.
 
-## Installation ##
+## Installation
 
 To install LibGtoint, [CMake](https://cmake.org/) 3.14 or higher is required to be installed in your system.
 
-### For Unix-like OS ###
+### For Unix-like OS
 
 If you use Unix or Unix-like OS such as Linux and macOS, you can install LibGtoint by executing the following commands:
 
@@ -49,11 +49,11 @@ By default, a static library is built. If you need a shared object version of th
 
 The default installation directory is `/usr/local`. If you want to change it, use the `cmake` option `-DCMAKE_INSTALL_PREFIX=`*Installation-Path*.
 
-### For Windows ###
+### For Windows
 
 If you use Windows, you have two options shown in the sections below.
 
-#### Using Visual Studio ####
+#### Using Visual Studio
 
 To install LibGtoint which is built by using Microsoft's genuine build tools, [Build Tools for Visual Studio](https://visualstudio.microsoft.com/downloads/#build-tools-for-visual-studio-2019) has to be installed in your system.
 After you have installed it, you can install LibGtoint by executing the following commands using 'Developer Command Prompt for VS 2019' or 'Developer PowerShell for VS 2019':
@@ -62,9 +62,9 @@ After you have installed it, you can install LibGtoint by executing the followin
 mkdir build
 cd build
 cmake -DFortran=OFF -DCMAKE_INSTALL_PREFIX=%USERPROFILE%\libgtoint ..
-MSBuild ALL_BUILD.vcxproj -p:Configuration=Release
-MSBuild RUN_TESTS.vcxproj -p:Configuration=Release
-MSBuild INSTALL.vcxproj -p:Configuration=Release
+cmake --build . --config Release
+ctest -C Release
+cmake --install . --config Release
 ```
 
 By default, a static library is built. If you need a dynamic link library, use the `cmake` option `-DBUILD_SHARED_LIBS=1`.
@@ -75,7 +75,7 @@ In the above commands, the installation directory is set to that directly under 
 - As of `cmake` 3.20.1, `cmake` fails to generate a build configuration for compiling Fortran sources even if Intel Fortran compiler for Windows exists. So, you cannot help but specify the `cmake` option `-DFortran=OFF`.
 - As of `cmake` 3.20.1, `cmake` does not see C compilers other than Microsoft Visual C++ compiler (MSVC) even if Intel C/C++ compiler for Windows exists. So, the `cmake` option `-DCMAKE_C_COMPILER=icl` has no effect.
 
-#### Using MinGW-w64 ####
+#### Using MinGW-w64
 
 To install LibGtoint which is built by MinGW tool chain, you can install LibGtoint by executing the following commands:
 
@@ -97,9 +97,9 @@ In the above commands, the installation directory is set to `/usr/local`. If you
 **Known Issue**:
 - As of GNU Binutils 2.36.1, a DLL version of LibGtoint causes abnormal termination. So, do not specify the `cmake` option `-DBUILD_SHARED_LIBS=1`.
 
-## API ##
+## API
 
-### Preparation ###
+### Preparation
 
 To use the API in a C program, the header file `gtoint.h` is needed.
 
@@ -113,13 +113,13 @@ To use the API in a Fortran program, the module `gtoint` is needed.
 use gtoint
 ```
 
-### Basic types ###
+### Basic types
 
 In the API for C, two data types are defined.
 - The data type `gtoint_double3_t` has three `double` type member variables named `x`, `y`, and `z`.
 - The data type `gtoint_int3_t` has three `int` type member variables named `x`, `y`, and `z`.
 
-### Error codes ###
+### Error codes
 
 As for C, most of API functions return error codes.
 As for Fortran, most of API routines pass error codes via the argument `err`.
@@ -131,7 +131,7 @@ The error codes are shown below.
 - `GTOINT_ERROR_UNSUPPORTED`: unsupported functionality
 - `GTOINT_ERROR_INTERNAL`: internal error
 
-### Creation of an integrator ###
+### Creation of an integrator
 
 To construct basis functions and ECPs, and to compute several kinds of integrals, an *integrator* is required.
 It can be created by using the following function or routine.
@@ -155,7 +155,7 @@ It can be created by using the following function or routine.
 **Return Value**
 - the error code (only C)
 
-### Disposal of an integrator ###
+### Disposal of an integrator
 
 The integrator must be disposed by using the following function or routine when the integrator is no more needed.
 
@@ -173,7 +173,7 @@ The integrator must be disposed by using the following function or routine when 
 **Argument**
 - `itg`: the integrator to be disposed; nothing is done if `GTOINT_NULL` (in C) or `c_null_ptr` (in Fortran)
 
-### Duplicate of an integrator ###
+### Duplicate of an integrator
 
 The integrator can be duplicated by using the following function or routine.
 
@@ -198,7 +198,7 @@ The integrator can be duplicated by using the following function or routine.
 **Return Value**
 - the error code (only C)
 
-### Cleanup of work memory ###
+### Cleanup of work memory
 
 The work memory automatically grown in the integrator can be deallocated by using the following function or routine.
 
@@ -216,7 +216,7 @@ The work memory automatically grown in the integrator can be deallocated by usin
 **Argument**
 - `itg`: the integrator whose work memory is to be deallocated
 
-### Change of the integral error tolerance ###
+### Change of the integral error tolerance
 
 The error tolerance of integrals can be changed by using the following function or routine.
 The error tolerance is used for nuclear attraction integrals, electron repulsion integrals, and ECP integrals.
@@ -238,7 +238,7 @@ The default value is `1e-10`.
 - `itg`: the integrator whose error tolerance is to be changed
 - `tol`: the new error tolerance
 
-### Retrieval of the integral error tolerance ###
+### Retrieval of the integral error tolerance
 
 The error tolerance of integrals can be retrieved by using the following function or routine.
 The error tolerance is used for nuclear attraction integrals, electron repulsion integrals, and ECP integrals.
@@ -262,7 +262,7 @@ The error tolerance is used for nuclear attraction integrals, electron repulsion
 **Return Value**
 - the current error tolerance (only C)
 
-### Change of the integral cutoff ###
+### Change of the integral cutoff
 
 The cutoff of integrals can be changed by using the following function or routine.
 The cutoff is used for ECP integrals.
@@ -284,7 +284,7 @@ The default value is `1e-15`.
 - `itg`: the integrator whose cutoff is to be changed
 - `cut`: the new cutoff
 
-### Retrieval of the integral cutoff ###
+### Retrieval of the integral cutoff
 
 The cutoff of integrals can be retrieved by using the following function or routine.
 The cutoff is used for ECP integrals.
@@ -308,7 +308,7 @@ The cutoff is used for ECP integrals.
 **Return Value**
 - the current cutoff (only C)
 
-### Construction of basis functions ###
+### Construction of basis functions
 
 The basis functions are defined using the following function or routine.
 The basis functions are automatically normalized.
@@ -353,7 +353,7 @@ The basis functions are automatically normalized.
 **Return Value**
 - the error code (only C)
 
-### Destruction of basis functions ###
+### Destruction of basis functions
 
 The basis functions must be destroyed by using the following function or routine when they are no more needed.
 
@@ -371,7 +371,7 @@ The basis functions must be destroyed by using the following function or routine
 **Argument**
 - `bas`: the basis shell to be destroyed; nothing is done if `GTOINT_NULL` (in C) or `c_null_ptr` (in Fortran)
 
-### Copy of basis functions ###
+### Copy of basis functions
 
 The basis functions can be copied using the following function or routine.
 
@@ -396,7 +396,7 @@ The basis functions can be copied using the following function or routine.
 **Return Value**
 - the error code (only C)
 
-### Count of basis functions ###
+### Count of basis functions
 
 The number of the basis functions can be retrieved by using the following function or routine.
 
@@ -419,7 +419,7 @@ The number of the basis functions can be retrieved by using the following functi
 **Return Value**
 - the number of the basis functions (only C)
 
-### Construction of scalar ECP ###
+### Construction of scalar ECP
 
 The scalar ECP is defined using the following function or routine.
 
@@ -459,7 +459,7 @@ The scalar ECP is defined using the following function or routine.
 **Return Value**
 - the error code (only C)
 
-### Destruction of scalar ECP ###
+### Destruction of scalar ECP
 
 The ECP must be destroyed by using the following function or routine when it is no more needed.
 
@@ -477,7 +477,7 @@ The ECP must be destroyed by using the following function or routine when it is 
 **Argument**
 - `ecp`: the ECP shell to be destroyed; nothing is done if `GTOINT_NULL` (in C) or `c_null_ptr` (in Fortran)
 
-### Copy of scalar ECP ###
+### Copy of scalar ECP
 
 The scalar ECP can be copied using the following function or routine.
 
@@ -502,7 +502,7 @@ The scalar ECP can be copied using the following function or routine.
 **Return Value**
 - the error code (only C)
 
-### Computation of integrals ###
+### Computation of integrals
 
 The several kinds of integrals can be computed by using the following functions or routines.
 
@@ -691,7 +691,7 @@ The several kinds of integrals can be computed by using the following functions 
 - As for `gtoint_compute_ecp_integrals()`, there is a limitation that the sum of the derivative orders of each coordinate component (x, y, or z) among 3 centers must be less than or equal to 2.
   The error code `GTOINT_ERROR_UNSUPPORTED` is returned if violating the limitation.
 
-## Example ##
+## Example
 
 If we have the following basis set (written in Gaussian format):
 ```
