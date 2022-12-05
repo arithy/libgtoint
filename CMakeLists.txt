@@ -12,7 +12,7 @@ set(Fortran ON CACHE BOOL "Support Fortran interface")
 
 set(CMAKE_C_STANDARD 99)
 set(CMAKE_VERBOSE_MAKEFILE OFF)
-set(CMAKE_BUILD_TYPE RELEASE)
+set(CMAKE_BUILD_TYPE Release)
 
 if(Fortran)
     include(CheckLanguage)
