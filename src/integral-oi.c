@@ -35,7 +35,9 @@ static gtoint_error_t compute_overlap_integrals_(
     const double3_t *p1, size_t na1, const int3_t *a1, size_t ng1, const double *g1, const double *c1,
     size_t nd, const int3_t *d0, const int3_t *d1
 ) {
-#define NVAR (1 + 5 * 3 * 4)
+#define NTERM 5
+#define NPTR (3 * 4)
+#define NVAR (1 + NTERM * NPTR)
 #define INIT_VRR_COEFFS_A(out, g1_, r01_, g01_) /* reference variable: i */ \
     { \
         const double vg1 = (g1_); \
@@ -159,25 +161,36 @@ static gtoint_error_t compute_overlap_integrals_(
     const size_t ng01 = ng0 * ng1;
     if (!gtoint__cache__reset(&(itg->c), ng01)) return GTOINT_ERROR_MEMORY;
     if (!gtoint__double_array__resize(&(itg->w), ng01 * NVAR)) return GTOINT_ERROR_MEMORY;
+    if (!gtoint__double_pointer_array__resize(&(itg->p), NTERM * NPTR)) return GTOINT_ERROR_MEMORY;
     size_t ivar = 0;
     double *const o01 = itg->w.p + ng01 * ivar++;
-    double *ca0x[5], *ca0y[5], *ca0z[5];
-    double *ca1x[5], *ca1y[5], *ca1z[5];
-    double *cd0x[5], *cd0y[5], *cd0z[5];
-    double *cd1x[5], *cd1y[5], *cd1z[5];
-    for (size_t i = 0; i < 5; i++) ca0x[i] = itg->w.p + ng01 * ivar++;
-    for (size_t i = 0; i < 5; i++) ca0y[i] = itg->w.p + ng01 * ivar++;
-    for (size_t i = 0; i < 5; i++) ca0z[i] = itg->w.p + ng01 * ivar++;
-    for (size_t i = 0; i < 5; i++) ca1x[i] = itg->w.p + ng01 * ivar++;
-    for (size_t i = 0; i < 5; i++) ca1y[i] = itg->w.p + ng01 * ivar++;
-    for (size_t i = 0; i < 5; i++) ca1z[i] = itg->w.p + ng01 * ivar++;
-    for (size_t i = 0; i < 5; i++) cd0x[i] = itg->w.p + ng01 * ivar++;
-    for (size_t i = 0; i < 5; i++) cd0y[i] = itg->w.p + ng01 * ivar++;
-    for (size_t i = 0; i < 5; i++) cd0z[i] = itg->w.p + ng01 * ivar++;
-    for (size_t i = 0; i < 5; i++) cd1x[i] = itg->w.p + ng01 * ivar++;
-    for (size_t i = 0; i < 5; i++) cd1y[i] = itg->w.p + ng01 * ivar++;
-    for (size_t i = 0; i < 5; i++) cd1z[i] = itg->w.p + ng01 * ivar++;
+    size_t iptr = 0;
+    double **const ca0x = itg->p.p + NTERM * iptr++;
+    double **const ca0y = itg->p.p + NTERM * iptr++;
+    double **const ca0z = itg->p.p + NTERM * iptr++;
+    double **const ca1x = itg->p.p + NTERM * iptr++;
+    double **const ca1y = itg->p.p + NTERM * iptr++;
+    double **const ca1z = itg->p.p + NTERM * iptr++;
+    double **const cd0x = itg->p.p + NTERM * iptr++;
+    double **const cd0y = itg->p.p + NTERM * iptr++;
+    double **const cd0z = itg->p.p + NTERM * iptr++;
+    double **const cd1x = itg->p.p + NTERM * iptr++;
+    double **const cd1y = itg->p.p + NTERM * iptr++;
+    double **const cd1z = itg->p.p + NTERM * iptr++;
+    for (size_t i = 0; i < NTERM; i++) ca0x[i] = itg->w.p + ng01 * ivar++;
+    for (size_t i = 0; i < NTERM; i++) ca0y[i] = itg->w.p + ng01 * ivar++;
+    for (size_t i = 0; i < NTERM; i++) ca0z[i] = itg->w.p + ng01 * ivar++;
+    for (size_t i = 0; i < NTERM; i++) ca1x[i] = itg->w.p + ng01 * ivar++;
+    for (size_t i = 0; i < NTERM; i++) ca1y[i] = itg->w.p + ng01 * ivar++;
+    for (size_t i = 0; i < NTERM; i++) ca1z[i] = itg->w.p + ng01 * ivar++;
+    for (size_t i = 0; i < NTERM; i++) cd0x[i] = itg->w.p + ng01 * ivar++;
+    for (size_t i = 0; i < NTERM; i++) cd0y[i] = itg->w.p + ng01 * ivar++;
+    for (size_t i = 0; i < NTERM; i++) cd0z[i] = itg->w.p + ng01 * ivar++;
+    for (size_t i = 0; i < NTERM; i++) cd1x[i] = itg->w.p + ng01 * ivar++;
+    for (size_t i = 0; i < NTERM; i++) cd1y[i] = itg->w.p + ng01 * ivar++;
+    for (size_t i = 0; i < NTERM; i++) cd1z[i] = itg->w.p + ng01 * ivar++;
     assert(ivar == NVAR);
+    assert(iptr == NPTR);
     for (size_t i1 = 0; i1 < ng1; i1++) {
     for (size_t i0 = 0; i0 < ng0; i0++) {
         const size_t i = i0 + ng0 * i1;
@@ -367,6 +380,8 @@ static gtoint_error_t compute_overlap_integrals_(
     }
     }
     return GTOINT_ERROR_OK;
+#undef NTERM
+#undef NPTR
 #undef NVAR
 #undef INIT_VRR_COEFFS_A
 #undef INIT_VRR_COEFFS_D

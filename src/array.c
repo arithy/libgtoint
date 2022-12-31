@@ -302,3 +302,71 @@ void gtoint__double_array__compact(double_array_t *obj) {
         double_array__clear_(obj);
     }
 }
+
+/*== double_pointer_array_t ==*/
+
+inline static void double_pointer_array__clear_(double_pointer_array_t *obj) {
+    obj->p = NULL;
+}
+
+inline static bool double_pointer_array__realloc_(double_pointer_array_t *obj, size_t num) {
+    double **const p = (double **)realloc(obj->p, sizeof(double *) * num);
+    if (p == NULL) return false;
+    obj->p = p;
+    return true;
+}
+
+inline static void double_pointer_array__free_(double_pointer_array_t *obj) {
+    free(obj->p);
+}
+
+void gtoint__double_pointer_array__initialize(double_pointer_array_t *obj) {
+    obj->m = 0;
+    obj->n = 0;
+    double_pointer_array__clear_(obj);
+}
+
+void gtoint__double_pointer_array__finalize(double_pointer_array_t *obj) {
+    double_pointer_array__free_(obj);
+}
+
+bool gtoint__double_pointer_array__resize(double_pointer_array_t *obj, size_t num) {
+    if (obj->m < num) {
+        size_t m = obj->m;
+        if (m == 0) m = ARRAY_INIT_ALLOC;
+        while (m < num && m != 0) m <<= 1;
+        if (m == 0) m = num; /* in case of shift overflow */
+        if (!double_pointer_array__realloc_(obj, m)) return false;
+        obj->m = m;
+    }
+    obj->n = num;
+    return true;
+}
+
+bool gtoint__double_pointer_array__copy(double_pointer_array_t *obj, const double_pointer_array_t *src) {
+    if (!gtoint__double_pointer_array__resize(obj, src->n)) return false;
+    memcpy(obj->p, src->p, sizeof(double *) * src->n);
+    return true;
+}
+
+void gtoint__double_pointer_array__move(double_pointer_array_t *obj, double_pointer_array_t *src) {
+    gtoint__double_pointer_array__finalize(obj);
+    *obj = *src;
+    gtoint__double_pointer_array__initialize(src);
+}
+
+void gtoint__double_pointer_array__compact(double_pointer_array_t *obj) {
+    if (obj->n > 0) {
+        size_t m = ARRAY_INIT_ALLOC;
+        while (m < obj->n && m != 0) m <<= 1;
+        if (m == 0) m = obj->n; /* in case of shift overflow */
+        if (m >= obj->m) return;
+        double_pointer_array__realloc_(obj, m);
+        obj->m = m;
+    }
+    else {
+        double_pointer_array__free_(obj);
+        obj->m = 0;
+        double_pointer_array__clear_(obj);
+    }
+}

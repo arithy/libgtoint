@@ -40,7 +40,9 @@ static gtoint_error_t compute_electron_repulsion_integrals_(
     const double3_t *p3, size_t na3, const int3_t *a3, size_t ng3, const double *g3, const double *c3,
     size_t nd, const int3_t *d0, const int3_t *d1, const int3_t *d2, const int3_t *d3
 ) {
-#define NVAR (6 * 2 + 2 + 14 * 3 * 8)
+#define NTERM 14
+#define NPTR (3 * 8)
+#define NVAR (6 * 2 + 2 + NTERM * NPTR)
 #define INIT_VRR_COEFFS_A(out, g0_, g2_, g3_, g01_, p0_, p01_, p0123_, g0123_, h0123_) /* reference variable: i */ \
     { \
         const double vg0 = (g0_); \
@@ -358,6 +360,7 @@ static gtoint_error_t compute_electron_repulsion_integrals_(
     const size_t ng0123 = ng01 * ng23;
     if (!gtoint__cache__reset(&(itg->c), ng0123)) return GTOINT_ERROR_MEMORY;
     if (!gtoint__double_array__resize(&(itg->w), ng0123 * NVAR)) return GTOINT_ERROR_MEMORY;
+    if (!gtoint__double_pointer_array__resize(&(itg->p), NTERM * NPTR)) return GTOINT_ERROR_MEMORY;
     size_t ivar = 0;
     double *const g01   = itg->w.p + ng0123 * ivar++;
     double *const p01x  = itg->w.p + ng0123 * ivar++;
@@ -373,39 +376,57 @@ static gtoint_error_t compute_electron_repulsion_integrals_(
     double *const o23   = itg->w.p + ng0123 * ivar++;
     double *const o0123 = itg->w.p + ng0123 * ivar++;
     double *const q0123 = itg->w.p + ng0123 * ivar++;
-    double *ca0x[14], *ca0y[14], *ca0z[14];
-    double *ca1x[14], *ca1y[14], *ca1z[14];
-    double *ca2x[14], *ca2y[14], *ca2z[14];
-    double *ca3x[14], *ca3y[14], *ca3z[14];
-    double *cd0x[14], *cd0y[14], *cd0z[14];
-    double *cd1x[14], *cd1y[14], *cd1z[14];
-    double *cd2x[14], *cd2y[14], *cd2z[14];
-    double *cd3x[14], *cd3y[14], *cd3z[14];
-    for (size_t i = 0; i < 14; i++) ca0x[i] = itg->w.p + ng0123 * ivar++;
-    for (size_t i = 0; i < 14; i++) ca0y[i] = itg->w.p + ng0123 * ivar++;
-    for (size_t i = 0; i < 14; i++) ca0z[i] = itg->w.p + ng0123 * ivar++;
-    for (size_t i = 0; i < 14; i++) ca1x[i] = itg->w.p + ng0123 * ivar++;
-    for (size_t i = 0; i < 14; i++) ca1y[i] = itg->w.p + ng0123 * ivar++;
-    for (size_t i = 0; i < 14; i++) ca1z[i] = itg->w.p + ng0123 * ivar++;
-    for (size_t i = 0; i < 14; i++) ca2x[i] = itg->w.p + ng0123 * ivar++;
-    for (size_t i = 0; i < 14; i++) ca2y[i] = itg->w.p + ng0123 * ivar++;
-    for (size_t i = 0; i < 14; i++) ca2z[i] = itg->w.p + ng0123 * ivar++;
-    for (size_t i = 0; i < 14; i++) ca3x[i] = itg->w.p + ng0123 * ivar++;
-    for (size_t i = 0; i < 14; i++) ca3y[i] = itg->w.p + ng0123 * ivar++;
-    for (size_t i = 0; i < 14; i++) ca3z[i] = itg->w.p + ng0123 * ivar++;
-    for (size_t i = 0; i < 14; i++) cd0x[i] = itg->w.p + ng0123 * ivar++;
-    for (size_t i = 0; i < 14; i++) cd0y[i] = itg->w.p + ng0123 * ivar++;
-    for (size_t i = 0; i < 14; i++) cd0z[i] = itg->w.p + ng0123 * ivar++;
-    for (size_t i = 0; i < 14; i++) cd1x[i] = itg->w.p + ng0123 * ivar++;
-    for (size_t i = 0; i < 14; i++) cd1y[i] = itg->w.p + ng0123 * ivar++;
-    for (size_t i = 0; i < 14; i++) cd1z[i] = itg->w.p + ng0123 * ivar++;
-    for (size_t i = 0; i < 14; i++) cd2x[i] = itg->w.p + ng0123 * ivar++;
-    for (size_t i = 0; i < 14; i++) cd2y[i] = itg->w.p + ng0123 * ivar++;
-    for (size_t i = 0; i < 14; i++) cd2z[i] = itg->w.p + ng0123 * ivar++;
-    for (size_t i = 0; i < 14; i++) cd3x[i] = itg->w.p + ng0123 * ivar++;
-    for (size_t i = 0; i < 14; i++) cd3y[i] = itg->w.p + ng0123 * ivar++;
-    for (size_t i = 0; i < 14; i++) cd3z[i] = itg->w.p + ng0123 * ivar++;
+    size_t iptr = 0;
+    double **const ca0x = itg->p.p + NTERM * iptr++;
+    double **const ca0y = itg->p.p + NTERM * iptr++;
+    double **const ca0z = itg->p.p + NTERM * iptr++;
+    double **const ca1x = itg->p.p + NTERM * iptr++;
+    double **const ca1y = itg->p.p + NTERM * iptr++;
+    double **const ca1z = itg->p.p + NTERM * iptr++;
+    double **const ca2x = itg->p.p + NTERM * iptr++;
+    double **const ca2y = itg->p.p + NTERM * iptr++;
+    double **const ca2z = itg->p.p + NTERM * iptr++;
+    double **const ca3x = itg->p.p + NTERM * iptr++;
+    double **const ca3y = itg->p.p + NTERM * iptr++;
+    double **const ca3z = itg->p.p + NTERM * iptr++;
+    double **const cd0x = itg->p.p + NTERM * iptr++;
+    double **const cd0y = itg->p.p + NTERM * iptr++;
+    double **const cd0z = itg->p.p + NTERM * iptr++;
+    double **const cd1x = itg->p.p + NTERM * iptr++;
+    double **const cd1y = itg->p.p + NTERM * iptr++;
+    double **const cd1z = itg->p.p + NTERM * iptr++;
+    double **const cd2x = itg->p.p + NTERM * iptr++;
+    double **const cd2y = itg->p.p + NTERM * iptr++;
+    double **const cd2z = itg->p.p + NTERM * iptr++;
+    double **const cd3x = itg->p.p + NTERM * iptr++;
+    double **const cd3y = itg->p.p + NTERM * iptr++;
+    double **const cd3z = itg->p.p + NTERM * iptr++;
+    for (size_t i = 0; i < NTERM; i++) ca0x[i] = itg->w.p + ng0123 * ivar++;
+    for (size_t i = 0; i < NTERM; i++) ca0y[i] = itg->w.p + ng0123 * ivar++;
+    for (size_t i = 0; i < NTERM; i++) ca0z[i] = itg->w.p + ng0123 * ivar++;
+    for (size_t i = 0; i < NTERM; i++) ca1x[i] = itg->w.p + ng0123 * ivar++;
+    for (size_t i = 0; i < NTERM; i++) ca1y[i] = itg->w.p + ng0123 * ivar++;
+    for (size_t i = 0; i < NTERM; i++) ca1z[i] = itg->w.p + ng0123 * ivar++;
+    for (size_t i = 0; i < NTERM; i++) ca2x[i] = itg->w.p + ng0123 * ivar++;
+    for (size_t i = 0; i < NTERM; i++) ca2y[i] = itg->w.p + ng0123 * ivar++;
+    for (size_t i = 0; i < NTERM; i++) ca2z[i] = itg->w.p + ng0123 * ivar++;
+    for (size_t i = 0; i < NTERM; i++) ca3x[i] = itg->w.p + ng0123 * ivar++;
+    for (size_t i = 0; i < NTERM; i++) ca3y[i] = itg->w.p + ng0123 * ivar++;
+    for (size_t i = 0; i < NTERM; i++) ca3z[i] = itg->w.p + ng0123 * ivar++;
+    for (size_t i = 0; i < NTERM; i++) cd0x[i] = itg->w.p + ng0123 * ivar++;
+    for (size_t i = 0; i < NTERM; i++) cd0y[i] = itg->w.p + ng0123 * ivar++;
+    for (size_t i = 0; i < NTERM; i++) cd0z[i] = itg->w.p + ng0123 * ivar++;
+    for (size_t i = 0; i < NTERM; i++) cd1x[i] = itg->w.p + ng0123 * ivar++;
+    for (size_t i = 0; i < NTERM; i++) cd1y[i] = itg->w.p + ng0123 * ivar++;
+    for (size_t i = 0; i < NTERM; i++) cd1z[i] = itg->w.p + ng0123 * ivar++;
+    for (size_t i = 0; i < NTERM; i++) cd2x[i] = itg->w.p + ng0123 * ivar++;
+    for (size_t i = 0; i < NTERM; i++) cd2y[i] = itg->w.p + ng0123 * ivar++;
+    for (size_t i = 0; i < NTERM; i++) cd2z[i] = itg->w.p + ng0123 * ivar++;
+    for (size_t i = 0; i < NTERM; i++) cd3x[i] = itg->w.p + ng0123 * ivar++;
+    for (size_t i = 0; i < NTERM; i++) cd3y[i] = itg->w.p + ng0123 * ivar++;
+    for (size_t i = 0; i < NTERM; i++) cd3z[i] = itg->w.p + ng0123 * ivar++;
     assert(ivar == NVAR);
+    assert(iptr == NPTR);
     for (size_t i1 = 0; i1 < ng1; i1++) {
     for (size_t i0 = 0; i0 < ng0; i0++) {
         const double t_g01 = 1.0 / (g0[i0] + g1[i1]);
@@ -741,6 +762,8 @@ static gtoint_error_t compute_electron_repulsion_integrals_(
     }
     }
     return GTOINT_ERROR_OK;
+#undef NTERM
+#undef NPTR
 #undef NVAR
 #undef INIT_VRR_COEFFS_A
 #undef INIT_VRR_COEFFS_D

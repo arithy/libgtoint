@@ -51,6 +51,11 @@ typedef struct double_array_tag {
     double *p;
 } double_array_t;
 
+typedef struct double_pointer_array_tag {
+    size_t m, n;
+    double **p;
+} double_pointer_array_t;
+
 void gtoint__int_array__initialize(int_array_t *obj);
 void gtoint__int_array__finalize(int_array_t *obj);
 bool gtoint__int_array__resize(int_array_t *obj, size_t num);
@@ -78,6 +83,13 @@ bool gtoint__double_array__resize(double_array_t *obj, size_t num);
 bool gtoint__double_array__copy(double_array_t *obj, const double_array_t *src);
 void gtoint__double_array__move(double_array_t *obj, double_array_t *src);
 void gtoint__double_array__compact(double_array_t *obj);
+
+void gtoint__double_pointer_array__initialize(double_pointer_array_t *obj);
+void gtoint__double_pointer_array__finalize(double_pointer_array_t *obj);
+bool gtoint__double_pointer_array__resize(double_pointer_array_t *obj, size_t num);
+bool gtoint__double_pointer_array__copy(double_pointer_array_t *obj, const double_pointer_array_t *src);
+void gtoint__double_pointer_array__move(double_pointer_array_t *obj, double_pointer_array_t *src);
+void gtoint__double_pointer_array__compact(double_pointer_array_t *obj);
 
 #ifdef __cplusplus
 }

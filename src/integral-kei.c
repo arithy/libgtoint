@@ -35,7 +35,9 @@ static gtoint_error_t compute_kinetic_energy_integrals_(
     const double3_t *p1, size_t na1, const int3_t *a1, size_t ng1, const double *g1, const double *c1,
     size_t nd, const int3_t *d0, const int3_t *d1
 ) {
-#define NVAR (2 + 10 * 3 * 4)
+#define NTERM 10
+#define NPTR (3 * 4)
+#define NVAR (2 + NTERM * NPTR)
 #define INIT_VRR_COEFFS_A(out, g1_, r01_, g01_, f01_) /* reference variable: i */ \
     { \
         const double vg1 = (g1_); \
@@ -319,26 +321,37 @@ static gtoint_error_t compute_kinetic_energy_integrals_(
     const size_t ng01 = ng0 * ng1;
     if (!gtoint__cache__reset(&(itg->c), ng01)) return GTOINT_ERROR_MEMORY;
     if (!gtoint__double_array__resize(&(itg->w), ng01 * NVAR)) return GTOINT_ERROR_MEMORY;
+    if (!gtoint__double_pointer_array__resize(&(itg->p), NTERM * NPTR)) return GTOINT_ERROR_MEMORY;
     size_t ivar = 0;
     double *const o01 = itg->w.p + ng01 * ivar++;
     double *const q01 = itg->w.p + ng01 * ivar++;
-    double *ca0x[10], *ca0y[10], *ca0z[10];
-    double *ca1x[10], *ca1y[10], *ca1z[10];
-    double *cd0x[10], *cd0y[10], *cd0z[10];
-    double *cd1x[10], *cd1y[10], *cd1z[10];
-    for (size_t i = 0; i < 10; i++) ca0x[i] = itg->w.p + ng01 * ivar++;
-    for (size_t i = 0; i < 10; i++) ca0y[i] = itg->w.p + ng01 * ivar++;
-    for (size_t i = 0; i < 10; i++) ca0z[i] = itg->w.p + ng01 * ivar++;
-    for (size_t i = 0; i < 10; i++) ca1x[i] = itg->w.p + ng01 * ivar++;
-    for (size_t i = 0; i < 10; i++) ca1y[i] = itg->w.p + ng01 * ivar++;
-    for (size_t i = 0; i < 10; i++) ca1z[i] = itg->w.p + ng01 * ivar++;
-    for (size_t i = 0; i < 10; i++) cd0x[i] = itg->w.p + ng01 * ivar++;
-    for (size_t i = 0; i < 10; i++) cd0y[i] = itg->w.p + ng01 * ivar++;
-    for (size_t i = 0; i < 10; i++) cd0z[i] = itg->w.p + ng01 * ivar++;
-    for (size_t i = 0; i < 10; i++) cd1x[i] = itg->w.p + ng01 * ivar++;
-    for (size_t i = 0; i < 10; i++) cd1y[i] = itg->w.p + ng01 * ivar++;
-    for (size_t i = 0; i < 10; i++) cd1z[i] = itg->w.p + ng01 * ivar++;
+    size_t iptr = 0;
+    double **ca0x = itg->p.p + NTERM * iptr++;
+    double **ca0y = itg->p.p + NTERM * iptr++;
+    double **ca0z = itg->p.p + NTERM * iptr++;
+    double **ca1x = itg->p.p + NTERM * iptr++;
+    double **ca1y = itg->p.p + NTERM * iptr++;
+    double **ca1z = itg->p.p + NTERM * iptr++;
+    double **cd0x = itg->p.p + NTERM * iptr++;
+    double **cd0y = itg->p.p + NTERM * iptr++;
+    double **cd0z = itg->p.p + NTERM * iptr++;
+    double **cd1x = itg->p.p + NTERM * iptr++;
+    double **cd1y = itg->p.p + NTERM * iptr++;
+    double **cd1z = itg->p.p + NTERM * iptr++;
+    for (size_t i = 0; i < NTERM; i++) ca0x[i] = itg->w.p + ng01 * ivar++;
+    for (size_t i = 0; i < NTERM; i++) ca0y[i] = itg->w.p + ng01 * ivar++;
+    for (size_t i = 0; i < NTERM; i++) ca0z[i] = itg->w.p + ng01 * ivar++;
+    for (size_t i = 0; i < NTERM; i++) ca1x[i] = itg->w.p + ng01 * ivar++;
+    for (size_t i = 0; i < NTERM; i++) ca1y[i] = itg->w.p + ng01 * ivar++;
+    for (size_t i = 0; i < NTERM; i++) ca1z[i] = itg->w.p + ng01 * ivar++;
+    for (size_t i = 0; i < NTERM; i++) cd0x[i] = itg->w.p + ng01 * ivar++;
+    for (size_t i = 0; i < NTERM; i++) cd0y[i] = itg->w.p + ng01 * ivar++;
+    for (size_t i = 0; i < NTERM; i++) cd0z[i] = itg->w.p + ng01 * ivar++;
+    for (size_t i = 0; i < NTERM; i++) cd1x[i] = itg->w.p + ng01 * ivar++;
+    for (size_t i = 0; i < NTERM; i++) cd1y[i] = itg->w.p + ng01 * ivar++;
+    for (size_t i = 0; i < NTERM; i++) cd1z[i] = itg->w.p + ng01 * ivar++;
     assert(ivar == NVAR);
+    assert(iptr == NPTR);
     for (size_t i1 = 0; i1 < ng1; i1++) {
     for (size_t i0 = 0; i0 < ng0; i0++) {
         const size_t i = i0 + ng0 * i1;
@@ -600,6 +613,8 @@ static gtoint_error_t compute_kinetic_energy_integrals_(
     }
     }
     return GTOINT_ERROR_OK;
+#undef NTERM
+#undef NPTR
 #undef NVAR
 #undef INIT_VRR_COEFFS_A
 #undef INIT_VRR_COEFFS_D

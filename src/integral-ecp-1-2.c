@@ -36,7 +36,9 @@ gtoint_error_t gtoint__compute_scalar_ecp_type1_integrals_2(
     const double3_t *pc, size_t ngc, const double *gc, const double *cc,
     size_t nd, const int3_t *d0, const int3_t *d1, const int3_t *dc
 ) {
-#define NVAR (1 + 6 * 3 * 5)
+#define NTERM 6
+#define NPTR (3 * 5)
+#define NVAR (1 + NTERM * NPTR)
 #define INIT_VRR_COEFFS_A(out, xyz, g0_, g1_, g2_, g012_, p0_, p1_, p2_) /* reference variable: i */ \
     { \
         out[0][i] = ((g1_) * ((p1_)->xyz - (p0_)->xyz) + (g2_) * ((p2_)->xyz - (p0_)->xyz)) * (g012_); \
@@ -187,29 +189,42 @@ gtoint_error_t gtoint__compute_scalar_ecp_type1_integrals_2(
     const size_t ng01c = ng0 * ng1 * ngc;
     if (!gtoint__cache__reset(&(itg->c), ng01c)) return GTOINT_ERROR_MEMORY;
     if (!gtoint__double_array__resize(&(itg->w), ng01c * NVAR)) return GTOINT_ERROR_MEMORY;
+    if (!gtoint__double_pointer_array__resize(&(itg->p), NTERM * NPTR)) return GTOINT_ERROR_MEMORY;
     size_t ivar = 0;
     double *const o01c  = itg->w.p + ng01c * ivar++;
-    double *ca0x[6], *ca0y[6], *ca0z[6];
-    double *ca1x[6], *ca1y[6], *ca1z[6];
-    double *cd0x[6], *cd0y[6], *cd0z[6];
-    double *cd1x[6], *cd1y[6], *cd1z[6];
-    double *cdcx[6], *cdcy[6], *cdcz[6];
-    for (size_t i = 0; i < 6; i++) ca0x[i] = itg->w.p + ng01c * ivar++;
-    for (size_t i = 0; i < 6; i++) ca0y[i] = itg->w.p + ng01c * ivar++;
-    for (size_t i = 0; i < 6; i++) ca0z[i] = itg->w.p + ng01c * ivar++;
-    for (size_t i = 0; i < 6; i++) ca1x[i] = itg->w.p + ng01c * ivar++;
-    for (size_t i = 0; i < 6; i++) ca1y[i] = itg->w.p + ng01c * ivar++;
-    for (size_t i = 0; i < 6; i++) ca1z[i] = itg->w.p + ng01c * ivar++;
-    for (size_t i = 0; i < 6; i++) cd0x[i] = itg->w.p + ng01c * ivar++;
-    for (size_t i = 0; i < 6; i++) cd0y[i] = itg->w.p + ng01c * ivar++;
-    for (size_t i = 0; i < 6; i++) cd0z[i] = itg->w.p + ng01c * ivar++;
-    for (size_t i = 0; i < 6; i++) cd1x[i] = itg->w.p + ng01c * ivar++;
-    for (size_t i = 0; i < 6; i++) cd1y[i] = itg->w.p + ng01c * ivar++;
-    for (size_t i = 0; i < 6; i++) cd1z[i] = itg->w.p + ng01c * ivar++;
-    for (size_t i = 0; i < 6; i++) cdcx[i] = itg->w.p + ng01c * ivar++;
-    for (size_t i = 0; i < 6; i++) cdcy[i] = itg->w.p + ng01c * ivar++;
-    for (size_t i = 0; i < 6; i++) cdcz[i] = itg->w.p + ng01c * ivar++;
+    size_t iptr = 0;
+    double **const ca0x = itg->p.p + NTERM * iptr++;
+    double **const ca0y = itg->p.p + NTERM * iptr++;
+    double **const ca0z = itg->p.p + NTERM * iptr++;
+    double **const ca1x = itg->p.p + NTERM * iptr++;
+    double **const ca1y = itg->p.p + NTERM * iptr++;
+    double **const ca1z = itg->p.p + NTERM * iptr++;
+    double **const cd0x = itg->p.p + NTERM * iptr++;
+    double **const cd0y = itg->p.p + NTERM * iptr++;
+    double **const cd0z = itg->p.p + NTERM * iptr++;
+    double **const cd1x = itg->p.p + NTERM * iptr++;
+    double **const cd1y = itg->p.p + NTERM * iptr++;
+    double **const cd1z = itg->p.p + NTERM * iptr++;
+    double **const cdcx = itg->p.p + NTERM * iptr++;
+    double **const cdcy = itg->p.p + NTERM * iptr++;
+    double **const cdcz = itg->p.p + NTERM * iptr++;
+    for (size_t i = 0; i < NTERM; i++) ca0x[i] = itg->w.p + ng01c * ivar++;
+    for (size_t i = 0; i < NTERM; i++) ca0y[i] = itg->w.p + ng01c * ivar++;
+    for (size_t i = 0; i < NTERM; i++) ca0z[i] = itg->w.p + ng01c * ivar++;
+    for (size_t i = 0; i < NTERM; i++) ca1x[i] = itg->w.p + ng01c * ivar++;
+    for (size_t i = 0; i < NTERM; i++) ca1y[i] = itg->w.p + ng01c * ivar++;
+    for (size_t i = 0; i < NTERM; i++) ca1z[i] = itg->w.p + ng01c * ivar++;
+    for (size_t i = 0; i < NTERM; i++) cd0x[i] = itg->w.p + ng01c * ivar++;
+    for (size_t i = 0; i < NTERM; i++) cd0y[i] = itg->w.p + ng01c * ivar++;
+    for (size_t i = 0; i < NTERM; i++) cd0z[i] = itg->w.p + ng01c * ivar++;
+    for (size_t i = 0; i < NTERM; i++) cd1x[i] = itg->w.p + ng01c * ivar++;
+    for (size_t i = 0; i < NTERM; i++) cd1y[i] = itg->w.p + ng01c * ivar++;
+    for (size_t i = 0; i < NTERM; i++) cd1z[i] = itg->w.p + ng01c * ivar++;
+    for (size_t i = 0; i < NTERM; i++) cdcx[i] = itg->w.p + ng01c * ivar++;
+    for (size_t i = 0; i < NTERM; i++) cdcy[i] = itg->w.p + ng01c * ivar++;
+    for (size_t i = 0; i < NTERM; i++) cdcz[i] = itg->w.p + ng01c * ivar++;
     assert(ivar == NVAR);
+    assert(iptr == NPTR);
     for (size_t ic = 0; ic < ngc; ic++) {
     for (size_t i1 = 0; i1 < ng1; i1++) {
     for (size_t i0 = 0; i0 < ng0; i0++) {
@@ -425,6 +440,8 @@ gtoint_error_t gtoint__compute_scalar_ecp_type1_integrals_2(
     }
     }
     return GTOINT_ERROR_OK;
+#undef NTERM
+#undef NPTR
 #undef NVAR
 #undef INIT_VRR_COEFFS_A
 #undef INIT_VRR_COEFFS_D

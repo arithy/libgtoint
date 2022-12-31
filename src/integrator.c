@@ -37,6 +37,7 @@ gtoint_error_t gtoint_integrator_create(gtoint_integrator_t *itg) {
     gtoint__cache__initialize(&(p->c));
     gtoint__double_array__initialize(&(p->v));
     gtoint__double_array__initialize(&(p->w));
+    gtoint__double_pointer_array__initialize(&(p->p));
     gtoint__spherical_harmonics_database__initialize(&(p->ecp.h));
     gtoint__spherical_harmonics_database__reset(&(p->ecp.h), false);
     gtoint__ecp_type2_angular_integral_database__initialize(&(p->ecp.a));
@@ -54,6 +55,7 @@ void gtoint_integrator_destroy(gtoint_integrator_t itg) {
     gtoint__cache__finalize(&(itg->c));
     gtoint__double_array__finalize(&(itg->v));
     gtoint__double_array__finalize(&(itg->w));
+    gtoint__double_pointer_array__finalize(&(itg->p));
     gtoint__spherical_harmonics_database__finalize(&(itg->ecp.h));
     gtoint__ecp_type2_angular_integral_database__finalize(&(itg->ecp.a));
     gtoint__ecp_type2_spherical_factor_database__finalize(&(itg->ecp.s[0]));
@@ -73,6 +75,7 @@ gtoint_error_t gtoint_integrator_copy(gtoint_integrator_t *itg, gtoint_integrato
     gtoint__cache__initialize(&(p->c));
     gtoint__double_array__initialize(&(p->v));
     gtoint__double_array__initialize(&(p->w));
+    gtoint__double_pointer_array__initialize(&(p->p));
     gtoint__spherical_harmonics_database__initialize(&(p->ecp.h));
     gtoint__spherical_harmonics_database__reset(&(p->ecp.h), false);
     gtoint__ecp_type2_angular_integral_database__initialize(&(p->ecp.a));
@@ -99,6 +102,8 @@ void gtoint_integrator_cleanup_memory(gtoint_integrator_t itg) {
     gtoint__double_array__compact(&(itg->v));
     gtoint__double_array__resize(&(itg->w), 0);
     gtoint__double_array__compact(&(itg->w));
+    gtoint__double_pointer_array__resize(&(itg->p), 0);
+    gtoint__double_pointer_array__compact(&(itg->p));
     gtoint__ecp_type2_spherical_factor_database__clear(&(itg->ecp.s[0]));
     gtoint__ecp_type2_spherical_factor_database__compact(&(itg->ecp.s[0]));
     gtoint__ecp_type2_spherical_factor_database__clear(&(itg->ecp.s[1]));

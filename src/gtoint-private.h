@@ -47,6 +47,7 @@ struct gtoint_integrator_tag {
     cache_t c; /* The cache to memorize the integral values. */
     double_array_t v; /* The Cartesian integral values */
     double_array_t w; /* The work array. */
+    double_pointer_array_t p; /* The array for temporary pointers. */
     struct gtoint_integrator_ecp_tag {
         spherical_harmonics_database_t h;
         ecp_type2_angular_integral_database_t a;
