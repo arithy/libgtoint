@@ -469,11 +469,11 @@ gtoint_error_t gtoint_compute_multipole_moment_integrals(
                     double v0 = 0.0;
                     for (size_t jm0 = 0; jm0 < s0->l.p[jb0]; jm0++) {
                         const size_t k0 = jm0 + s0->m * jb0;
-                        v0 += s0->c.p[k0] * itg->v.p[(im0 + s0->i.p[k0]) + mm0 * ((im1 + s1->i.p[k1]) + mm1 * (iam + nam * id))];
+                        v0 += s0->c.p[k0] * itg->v.p[(im0 + s0->i.p[k0]) + mm0 * ((im1 + s1->i.p[k1]) + mm1 * (iam + (size_t)nam * id))];
                     }
                     v1 += s1->c.p[k1] * v0;
                 }
-                out[(ib0 + jb0) + mb0 * ((ib1 + jb1) + mb1 * (iam + nam * id))] = v1;
+                out[(ib0 + jb0) + mb0 * ((ib1 + jb1) + mb1 * (iam + (size_t)nam * id))] = v1;
             }
             }
         }
