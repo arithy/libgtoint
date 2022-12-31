@@ -41,7 +41,7 @@ static gtoint_error_t compute_electron_repulsion_integrals_(
     size_t nd, const int3_t *d0, const int3_t *d1, const int3_t *d2, const int3_t *d3
 ) {
 #define NVAR (6 * 2 + 2 + 14 * 3 * 8)
-#define INIT_VRR_COEFFS_A(out, g0_, g2_, g3_, g01_, p0_, p01_, p0123_, g0123_, h0123_) /* referrence variable: i */ \
+#define INIT_VRR_COEFFS_A(out, g0_, g2_, g3_, g01_, p0_, p01_, p0123_, g0123_, h0123_) /* reference variable: i */ \
     { \
         const double vg0 = (g0_); \
         const double vg2 = (g2_); \
@@ -71,7 +71,7 @@ static gtoint_error_t compute_electron_repulsion_integrals_(
         out[12][i] = vg3 * (g0123_); \
         out[13][i] = vg0123h; \
     }
-#define INIT_VRR_COEFFS_D(out, g0_, g2_, g3_, g01_, f01_, p0_, p01_, p0123_, g0123_, h0123_) /* referrence variable: i */ \
+#define INIT_VRR_COEFFS_D(out, g0_, g2_, g3_, g01_, f01_, p0_, p01_, p0123_, g0123_, h0123_) /* reference variable: i */ \
     { \
         const double vg0 = (g0_); \
         const double vg2 = (g2_); \
@@ -101,7 +101,7 @@ static gtoint_error_t compute_electron_repulsion_integrals_(
         out[12][i] = 2.0 * vg3 * vh0123; \
         out[13][i] = vh0123; \
     }
-#define EXPAND_VRR(coe, xyz, i0, i1, i2, i3) /* referrence variables: itg, e, s, is, ng0123 */ \
+#define EXPAND_VRR(coe, xyz, i0, i1, i2, i3) /* reference variables: itg, e, s, is, ng0123 */ \
     { \
         s.o = is; \
         s.b = false; \

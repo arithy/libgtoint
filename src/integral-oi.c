@@ -36,7 +36,7 @@ static gtoint_error_t compute_overlap_integrals_(
     size_t nd, const int3_t *d0, const int3_t *d1
 ) {
 #define NVAR (1 + 5 * 3 * 4)
-#define INIT_VRR_COEFFS_A(out, g1_, r01_, g01_) /* referrence variable: i */ \
+#define INIT_VRR_COEFFS_A(out, g1_, r01_, g01_) /* reference variable: i */ \
     { \
         const double vg1 = (g1_); \
         const double vr01 = (r01_); \
@@ -48,7 +48,7 @@ static gtoint_error_t compute_overlap_integrals_(
         out[3][i] = vh1; \
         out[4][i] = vg01h; \
     }
-#define INIT_VRR_COEFFS_D(out, g0_, r01_, g01_, f01_) /* referrence variable: i */ \
+#define INIT_VRR_COEFFS_D(out, g0_, r01_, g01_, f01_) /* reference variable: i */ \
     { \
         const double vg0 = (g0_); \
         const double vr01 = (r01_); \
@@ -61,7 +61,7 @@ static gtoint_error_t compute_overlap_integrals_(
         out[3][i] = vf01d; \
         out[4][i] = vh0; \
     }
-#define EXPAND_VRR(coe, xyz, i0, i1) /* referrence variables: itg, e, s, is, ng01 */ \
+#define EXPAND_VRR(coe, xyz, i0, i1) /* reference variables: itg, e, s, is, ng01 */ \
     { \
         s.o = is; \
         s.b = false; \

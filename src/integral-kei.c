@@ -36,7 +36,7 @@ static gtoint_error_t compute_kinetic_energy_integrals_(
     size_t nd, const int3_t *d0, const int3_t *d1
 ) {
 #define NVAR (2 + 10 * 3 * 4)
-#define INIT_VRR_COEFFS_A(out, g1_, r01_, g01_, f01_) /* referrence variable: i */ \
+#define INIT_VRR_COEFFS_A(out, g1_, r01_, g01_, f01_) /* reference variable: i */ \
     { \
         const double vg1 = (g1_); \
         const double vr01 = (r01_); \
@@ -55,7 +55,7 @@ static gtoint_error_t compute_kinetic_energy_integrals_(
         out[8][i] = vh1s0d; \
         out[9][i] = (f01_) * (g01_); \
     }
-#define INIT_VRR_COEFFS_D(out, g0_, r01_, g01_, f01_) /* referrence variable: i */ \
+#define INIT_VRR_COEFFS_D(out, g0_, r01_, g01_, f01_) /* reference variable: i */ \
     { \
         const double vg0 = (g0_); \
         const double vr01 = (r01_); \
@@ -74,7 +74,7 @@ static gtoint_error_t compute_kinetic_energy_integrals_(
         out[8][i] = vf01ds; \
         out[9][i] = 2.0 * vg0 * vh0 * vh1; \
     }
-#define EXPAND_VRR(coe, xyz, i0, i1) /* referrence variables: itg, e, s, is, ng01 */ \
+#define EXPAND_VRR(coe, xyz, i0, i1) /* reference variables: itg, e, s, is, ng01 */ \
     { \
         s.o = is; \
         s.b = false; \
@@ -220,7 +220,7 @@ static gtoint_error_t compute_kinetic_energy_integrals_(
             } \
         } \
     }
-#define EXPAND_VRR_O(coe, xyz, i0, i1) /* referrence variables: itg, e, s, is, ng01 */ \
+#define EXPAND_VRR_O(coe, xyz, i0, i1) /* reference variables: itg, e, s, is, ng01 */ \
     { \
         s.o = is; \
         s.b = false; \

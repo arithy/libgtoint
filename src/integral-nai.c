@@ -40,7 +40,7 @@ static gtoint_error_t compute_nuclear_attraction_integrals_(
     size_t nd, const int3_t *d0, const int3_t *d1, const int3_t *dc
 ) {
 #define NVAR (2 + 11 * 3 * 4 + 4 * 3)
-#define INIT_VRR_COEFFS_A(out, g1_, r01_, p01c_, g01_) /* referrence variable: i */ \
+#define INIT_VRR_COEFFS_A(out, g1_, r01_, p01c_, g01_) /* reference variable: i */ \
     { \
         const double vg1 = (g1_); \
         const double vr01 = (r01_); \
@@ -59,7 +59,7 @@ static gtoint_error_t compute_nuclear_attraction_integrals_(
         out[9][i] = -vg01h; \
         out[10][i] = 1.0; \
     }
-#define INIT_VRR_COEFFS_D(out, g0_, r01_, p01c_, g01_, f01_) /* referrence variable: i */ \
+#define INIT_VRR_COEFFS_D(out, g0_, r01_, p01c_, g01_, f01_) /* reference variable: i */ \
     { \
         const double vg0 = (g0_); \
         const double vr01 = (r01_); \
@@ -79,14 +79,14 @@ static gtoint_error_t compute_nuclear_attraction_integrals_(
         out[9][i] = -vh0; \
         out[10][i] = vg0d; \
     }
-#define INIT_VRR_COEFFS_C(out, xyz, g0_, g1_) /* referrence variables: i, p0, p1, pc */ \
+#define INIT_VRR_COEFFS_C(out, xyz, g0_, g1_) /* reference variables: i, p0, p1, pc */ \
     { \
         out[0][i] = 2.0 * ((g0_) * (p0->xyz - pc->xyz) + (g1_) * (p1->xyz - pc->xyz)); \
         out[1][i] = 2.0 * (g0_); \
         out[2][i] = 2.0 * (g1_); \
         out[3][i] = -2.0 * ((g0_) + (g1_)); \
     }
-#define EXPAND_VRR(coe, xyz, i0, i1) /* referrence variables: itg, e, s, is, ng01 */ \
+#define EXPAND_VRR(coe, xyz, i0, i1) /* reference variables: itg, e, s, is, ng01 */ \
     { \
         s.o = is; \
         s.b = false; \
@@ -245,7 +245,7 @@ static gtoint_error_t compute_nuclear_attraction_integrals_(
             } \
         } \
     }
-#define EXPAND_VRR_C(coe, xyz) /* referrence variables: itg, e, s, is, ng01 */ \
+#define EXPAND_VRR_C(coe, xyz) /* reference variables: itg, e, s, is, ng01 */ \
     { \
         s.o = is; \
         s.b = false; \

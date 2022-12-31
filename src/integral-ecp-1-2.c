@@ -37,7 +37,7 @@ gtoint_error_t gtoint__compute_scalar_ecp_type1_integrals_2(
     size_t nd, const int3_t *d0, const int3_t *d1, const int3_t *dc
 ) {
 #define NVAR (1 + 6 * 3 * 5)
-#define INIT_VRR_COEFFS_A(out, xyz, g0_, g1_, g2_, g012_, p0_, p1_, p2_) /* referrence variable: i */ \
+#define INIT_VRR_COEFFS_A(out, xyz, g0_, g1_, g2_, g012_, p0_, p1_, p2_) /* reference variable: i */ \
     { \
         out[0][i] = ((g1_) * ((p1_)->xyz - (p0_)->xyz) + (g2_) * ((p2_)->xyz - (p0_)->xyz)) * (g012_); \
         out[1][i] = -((g1_) + (g2_)) * (g012_); \
@@ -46,7 +46,7 @@ gtoint_error_t gtoint__compute_scalar_ecp_type1_integrals_2(
         out[4][i] = 0.5 * (g012_); \
         out[5][i] = (g2_)* (g012_); \
     }
-#define INIT_VRR_COEFFS_D(out, xyz, g0_, g1_, g2_, g012_, p0_, p1_, p2_) /* referrence variable: i */ \
+#define INIT_VRR_COEFFS_D(out, xyz, g0_, g1_, g2_, g012_, p0_, p1_, p2_) /* reference variable: i */ \
     { \
         out[0][i] = 2.0 * (g0_) * ((g1_) * ((p1_)->xyz - (p0_)->xyz) + (g2_) * ((p2_)->xyz - (p0_)->xyz)) * (g012_); \
         out[1][i] = -2.0 * (g0_) * ((g1_) + (g2_)) * (g012_); \
@@ -55,7 +55,7 @@ gtoint_error_t gtoint__compute_scalar_ecp_type1_integrals_2(
         out[4][i] = (g0_) * (g012_); \
         out[5][i] = 2.0 * (g0_) * (g2_) * (g012_); \
     }
-#define INIT_VRR_COEFFS_C(out, xyz, g0_, g1_, g2_, g012_, p0_, p1_, p2_) /* referrence variable: i */ \
+#define INIT_VRR_COEFFS_C(out, xyz, g0_, g1_, g2_, g012_, p0_, p1_, p2_) /* reference variable: i */ \
     { \
         out[0][i] = 2.0 * (g2_) * ((g1_) * ((p1_)->xyz - (p2_)->xyz) + (g0_) * ((p0_)->xyz - (p2_)->xyz)) * (g012_); \
         out[1][i] = 2.0 * (g0_) * (g2_) * (g012_); \
@@ -64,7 +64,7 @@ gtoint_error_t gtoint__compute_scalar_ecp_type1_integrals_2(
         out[4][i] = (g2_) * (g012_); \
         out[5][i] = -2.0 * (g2_) * ((g0_) + (g1_)) * (g012_); \
     }
-#define EXPAND_VRR(coe, xyz, i0, i1) /* referrence variables: itg, e, s, is, ng01c */ \
+#define EXPAND_VRR(coe, xyz, i0, i1) /* reference variables: itg, e, s, is, ng01c */ \
     { \
         s.o = is; \
         s.b = false; \

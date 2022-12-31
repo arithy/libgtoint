@@ -87,7 +87,7 @@ gtoint_error_t gtoint__compute_scalar_ecp_type2_integrals(
     size_t nd, const int3_t *d0, const int3_t *d1, const int3_t *dc
 ) {
 #define NVAR 1
-#define EXPAND_VRR_0(xyz) /* referrence variables: itg, e, s, is, ng0, ng1, ngc, ng01c, g0, r0c */ \
+#define EXPAND_VRR_0(xyz) /* reference variables: itg, e, s, is, ng0, ng1, ngc, ng01c, g0, r0c */ \
     { \
         s.o = is; \
         s.b = false; \
@@ -179,7 +179,7 @@ gtoint_error_t gtoint__compute_scalar_ecp_type2_integrals(
             } \
         } \
     }
-#define EXPAND_VRR_1(xyz) /* referrence variables: itg, e, s, is, ng0, ng1, ngc, ng01c, g1, r1c */ \
+#define EXPAND_VRR_1(xyz) /* reference variables: itg, e, s, is, ng0, ng1, ngc, ng01c, g1, r1c */ \
     { \
         s.o = is; \
         s.b = false; \
@@ -271,7 +271,7 @@ gtoint_error_t gtoint__compute_scalar_ecp_type2_integrals(
             } \
         } \
     }
-#define EXPAND_VRR_C(xyz) /* referrence variables: itg, e, s, is, ng0, ng1, ngc, ng01c, g0, g1, r0c, r1c */ \
+#define EXPAND_VRR_C(xyz) /* reference variables: itg, e, s, is, ng0, ng1, ngc, ng01c, g0, g1, r0c, r1c */ \
     { \
         s.o = is; \
         s.b = false; \
