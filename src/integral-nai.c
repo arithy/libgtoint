@@ -1,7 +1,7 @@
 /*
  * LibGtoint: an analytical GTO integral library for C and Fortran.
  *
- * Copyright (c) 2020-2021 Arihiro Yoshida. All rights reserved.
+ * Copyright (c) 2020-2023 Arihiro Yoshida. All rights reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -383,9 +383,9 @@ static gtoint_error_t compute_nuclear_attraction_integrals_(
     double **const cd1y = itg->p.p + NTERM * iptr++;
     double **const cd1z = itg->p.p + NTERM * iptr++;
     size_t iptr_c = 0;
-    double **const cdcx = itg->p.p + NTERM_C * iptr_c++;
-    double **const cdcy = itg->p.p + NTERM_C * iptr_c++;
-    double **const cdcz = itg->p.p + NTERM_C * iptr_c++;
+    double **const cdcx = itg->p.p + NTERM * iptr + NTERM_C * iptr_c++;
+    double **const cdcy = itg->p.p + NTERM * iptr + NTERM_C * iptr_c++;
+    double **const cdcz = itg->p.p + NTERM * iptr + NTERM_C * iptr_c++;
     for (size_t i = 0; i < NTERM; i++) ca0x[i] = itg->w.p + ng01 * ivar++;
     for (size_t i = 0; i < NTERM; i++) ca0y[i] = itg->w.p + ng01 * ivar++;
     for (size_t i = 0; i < NTERM; i++) ca0z[i] = itg->w.p + ng01 * ivar++;
