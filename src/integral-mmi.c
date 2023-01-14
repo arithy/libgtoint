@@ -317,7 +317,7 @@ static gtoint_error_t compute_multipole_moment_integrals_(
                 const double *const c = gtoint__stack__coefficients(&(itg->s), is);
                 const double *const v = gtoint__stack__integrals(&(itg->s), is);
                 double *w;
-                if (!gtoint__cache__reference_to_store_oi(&(itg->c), &s.i, &w)) return GTOINT_ERROR_MEMORY;
+                if (!gtoint__cache__reference_to_store_mmi(&(itg->c), &s.i, &w)) return GTOINT_ERROR_MEMORY;
                 for (size_t i = 0; i < ng01; i++) w[i] = v[i];
                 if (s.o == STACK_VOID_INDEX) {
                     double o = 0.0;
@@ -332,7 +332,7 @@ static gtoint_error_t compute_multipole_moment_integrals_(
             }
             else {
                 const double *w;
-                if (gtoint__cache__reference_to_fetch_oi(&(itg->c), &s.i, &w)) {
+                if (gtoint__cache__reference_to_fetch_mmi(&(itg->c), &s.i, &w)) {
                     const double *const c = gtoint__stack__coefficients(&(itg->s), is);
                     if (s.o == STACK_VOID_INDEX) {
                         double o = 0.0;
@@ -414,7 +414,7 @@ static gtoint_error_t compute_multipole_moment_integrals_(
                     }
                     else {
                         double *v;
-                        if (!gtoint__cache__reference_to_store_oi(&(itg->c), &s.i, &v)) return GTOINT_ERROR_MEMORY;
+                        if (!gtoint__cache__reference_to_store_mmi(&(itg->c), &s.i, &v)) return GTOINT_ERROR_MEMORY;
                         for (size_t i = 0; i < ng01; i++) {
                             v[i] = o01[i];
                         }
