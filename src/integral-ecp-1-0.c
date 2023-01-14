@@ -1,7 +1,7 @@
 /*
  * LibGtoint: an analytical GTO integral library for C and Fortran.
  *
- * Copyright (c) 2020-2021 Arihiro Yoshida. All rights reserved.
+ * Copyright (c) 2020-2023 Arihiro Yoshida. All rights reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -332,21 +332,21 @@ gtoint_error_t gtoint__compute_scalar_ecp_type1_integrals_0(
     double *const o01c = itg->w.p + ng01c * ivar++;
     double *const q01c = itg->w.p + ng01c * ivar++;
     size_t iptr = 0;
-    double **ca0x = itg->p.p + NTERM * iptr++;
-    double **ca0y = itg->p.p + NTERM * iptr++;
-    double **ca0z = itg->p.p + NTERM * iptr++;
-    double **ca1x = itg->p.p + NTERM * iptr++;
-    double **ca1y = itg->p.p + NTERM * iptr++;
-    double **ca1z = itg->p.p + NTERM * iptr++;
-    double **cd0x = itg->p.p + NTERM * iptr++;
-    double **cd0y = itg->p.p + NTERM * iptr++;
-    double **cd0z = itg->p.p + NTERM * iptr++;
-    double **cd1x = itg->p.p + NTERM * iptr++;
-    double **cd1y = itg->p.p + NTERM * iptr++;
-    double **cd1z = itg->p.p + NTERM * iptr++;
-    double **cdcx = itg->p.p + NTERM * iptr++;
-    double **cdcy = itg->p.p + NTERM * iptr++;
-    double **cdcz = itg->p.p + NTERM * iptr++;
+    double **const ca0x = itg->p.p + NTERM * iptr++;
+    double **const ca0y = itg->p.p + NTERM * iptr++;
+    double **const ca0z = itg->p.p + NTERM * iptr++;
+    double **const ca1x = itg->p.p + NTERM * iptr++;
+    double **const ca1y = itg->p.p + NTERM * iptr++;
+    double **const ca1z = itg->p.p + NTERM * iptr++;
+    double **const cd0x = itg->p.p + NTERM * iptr++;
+    double **const cd0y = itg->p.p + NTERM * iptr++;
+    double **const cd0z = itg->p.p + NTERM * iptr++;
+    double **const cd1x = itg->p.p + NTERM * iptr++;
+    double **const cd1y = itg->p.p + NTERM * iptr++;
+    double **const cd1z = itg->p.p + NTERM * iptr++;
+    double **const cdcx = itg->p.p + NTERM * iptr++;
+    double **const cdcy = itg->p.p + NTERM * iptr++;
+    double **const cdcz = itg->p.p + NTERM * iptr++;
     for (size_t i = 0; i < NTERM; i++) ca0x[i] = itg->w.p + ng01c * ivar++;
     for (size_t i = 0; i < NTERM; i++) ca0y[i] = itg->w.p + ng01c * ivar++;
     for (size_t i = 0; i < NTERM; i++) ca0z[i] = itg->w.p + ng01c * ivar++;

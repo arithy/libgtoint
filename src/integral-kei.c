@@ -1,7 +1,7 @@
 /*
  * LibGtoint: an analytical GTO integral library for C and Fortran.
  *
- * Copyright (c) 2020-2021 Arihiro Yoshida. All rights reserved.
+ * Copyright (c) 2020-2023 Arihiro Yoshida. All rights reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -326,18 +326,18 @@ static gtoint_error_t compute_kinetic_energy_integrals_(
     double *const o01 = itg->w.p + ng01 * ivar++;
     double *const q01 = itg->w.p + ng01 * ivar++;
     size_t iptr = 0;
-    double **ca0x = itg->p.p + NTERM * iptr++;
-    double **ca0y = itg->p.p + NTERM * iptr++;
-    double **ca0z = itg->p.p + NTERM * iptr++;
-    double **ca1x = itg->p.p + NTERM * iptr++;
-    double **ca1y = itg->p.p + NTERM * iptr++;
-    double **ca1z = itg->p.p + NTERM * iptr++;
-    double **cd0x = itg->p.p + NTERM * iptr++;
-    double **cd0y = itg->p.p + NTERM * iptr++;
-    double **cd0z = itg->p.p + NTERM * iptr++;
-    double **cd1x = itg->p.p + NTERM * iptr++;
-    double **cd1y = itg->p.p + NTERM * iptr++;
-    double **cd1z = itg->p.p + NTERM * iptr++;
+    double **const ca0x = itg->p.p + NTERM * iptr++;
+    double **const ca0y = itg->p.p + NTERM * iptr++;
+    double **const ca0z = itg->p.p + NTERM * iptr++;
+    double **const ca1x = itg->p.p + NTERM * iptr++;
+    double **const ca1y = itg->p.p + NTERM * iptr++;
+    double **const ca1z = itg->p.p + NTERM * iptr++;
+    double **const cd0x = itg->p.p + NTERM * iptr++;
+    double **const cd0y = itg->p.p + NTERM * iptr++;
+    double **const cd0z = itg->p.p + NTERM * iptr++;
+    double **const cd1x = itg->p.p + NTERM * iptr++;
+    double **const cd1y = itg->p.p + NTERM * iptr++;
+    double **const cd1z = itg->p.p + NTERM * iptr++;
     for (size_t i = 0; i < NTERM; i++) ca0x[i] = itg->w.p + ng01 * ivar++;
     for (size_t i = 0; i < NTERM; i++) ca0y[i] = itg->w.p + ng01 * ivar++;
     for (size_t i = 0; i < NTERM; i++) ca0z[i] = itg->w.p + ng01 * ivar++;
