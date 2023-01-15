@@ -9,7 +9,7 @@
 Its main features are as follows:
 - Supports Cartesian GTOs and spherical GTOs,
 - Supports GTOs with any angular momentum quantum numbers (s, p, d, f, ...),
-- Supports analytical derivatives with any orders [*1], and
+- Supports analytical derivatives with any orders, and
 - Implemented compactly.
 
 It supports the following integrals:
@@ -21,8 +21,6 @@ It supports the following integrals:
 - scalar ECP (effective core potential) integrals.
 
 Currently, LibGtoint uses only Obara-Saika scheme.
-
-[*1]: As for ECP integrals, there is a limitation. For the details, see *Notice* in the section *API*.
 
 ## Installation
 
@@ -688,8 +686,6 @@ The several kinds of integrals can be computed by using the following functions 
 - The Cartesian basis functions of the same angular momentum quantum number are ordered alphabetically according to their name (ex. dxx, dxy, dxz, dyy, dyz, dzz).
   The spherical basis functions of the same angular momentum quantum number are ordered numerically according to their numbering (ex. d-1, d-2, d0, d+1, d+2).
 - As for `gtoint_compute_nuclear_attraction_integrals()`, each integral value have to be multiplied by the negated charge of the nucleus at the position `pc`.
-- As for `gtoint_compute_ecp_integrals()`, there is a limitation that the sum of the derivative orders of each coordinate component (x, y, or z) among 3 centers must be less than or equal to 2.
-  The error code `GTOINT_ERROR_UNSUPPORTED` is returned if violating the limitation.
 
 ## Example
 

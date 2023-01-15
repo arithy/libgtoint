@@ -1,7 +1,7 @@
 /*
  * LibGtoint: an analytical GTO integral library for C and Fortran.
  *
- * Copyright (c) 2020-2021 Arihiro Yoshida. All rights reserved.
+ * Copyright (c) 2020-2023 Arihiro Yoshida. All rights reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -411,11 +411,6 @@ gtoint_error_t gtoint__compute_scalar_ecp_type2_integrals(
     }
     size_t io = 0;
     for (size_t id = 0; id < nd; id++) {
-        if (
-            d0[id].x + d1[id].x + dc[id].x > 2 ||
-            d0[id].y + d1[id].y + dc[id].y > 2 ||
-            d0[id].z + d1[id].z + dc[id].z > 2
-        ) return GTOINT_ERROR_UNSUPPORTED; /* current limitation of derivatives */
     for (size_t ia1 = 0; ia1 < na1; ia1++) {
     for (size_t ia0 = 0; ia0 < na0; ia0++) {
         itg->v.p[io] = 0.0;
