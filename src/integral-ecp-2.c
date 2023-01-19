@@ -448,7 +448,7 @@ gtoint_error_t gtoint__compute_scalar_ecp_type2_integrals(
                 const double *const c = gtoint__stack__coefficients(&(itg->s), is);
                 const double *const v = gtoint__stack__integrals(&(itg->s), is);
                 double *w;
-                if (!gtoint__cache__reference_to_store_ecp1(&(itg->c), &s.i, &w)) return GTOINT_ERROR_MEMORY;
+                if (!gtoint__cache__reference_to_store_ecp2(&(itg->c), &s.i, &w)) return GTOINT_ERROR_MEMORY;
                 for (size_t i = 0; i < ng01c; i++) w[i] = v[i];
                 if (s.o == STACK_VOID_INDEX) {
                     double o = 0.0;
