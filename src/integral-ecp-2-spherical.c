@@ -1,7 +1,7 @@
 /*
  * LibGtoint: an analytical GTO integral library for C and Fortran.
  *
- * Copyright (c) 2020-2021 Arihiro Yoshida. All rights reserved.
+ * Copyright (c) 2020-2023 Arihiro Yoshida. All rights reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -234,4 +234,76 @@ void gtoint__ecp_type2_spherical_factor_database__move(ecp_type2_spherical_facto
 
 void gtoint__ecp_type2_spherical_factor_database__compact(ecp_type2_spherical_factor_database_t *obj) {
     gtoint__ecp_type2_spherical_factor_array__compact(&(obj->a));
+}
+
+/*== ecp_type2_spherical_factor_database_array_t ==*/
+
+inline static void ecp_type2_spherical_factor_database_array__clear_(ecp_type2_spherical_factor_database_array_t *obj) {
+    obj->p = NULL;
+}
+
+inline static bool ecp_type2_spherical_factor_database_array__realloc_(ecp_type2_spherical_factor_database_array_t *obj, size_t num) {
+    ecp_type2_spherical_factor_database_t *const p = (ecp_type2_spherical_factor_database_t *)realloc(obj->p, sizeof(ecp_type2_spherical_factor_database_t) * num);
+    if (p == NULL) return false;
+    obj->p = p;
+    return true;
+}
+
+inline static void ecp_type2_spherical_factor_database_array__free_(ecp_type2_spherical_factor_database_array_t *obj) {
+    free(obj->p);
+}
+
+void gtoint__ecp_type2_spherical_factor_database_array__initialize(ecp_type2_spherical_factor_database_array_t *obj) {
+    obj->m = 0;
+    obj->n = 0;
+    ecp_type2_spherical_factor_database_array__clear_(obj);
+}
+
+void gtoint__ecp_type2_spherical_factor_database_array__finalize(ecp_type2_spherical_factor_database_array_t *obj) {
+    for (size_t i = 0; i < obj->n; i++) gtoint__ecp_type2_spherical_factor_database__finalize(&(obj->p[i]));
+    ecp_type2_spherical_factor_database_array__free_(obj);
+}
+
+bool gtoint__ecp_type2_spherical_factor_database_array__resize(ecp_type2_spherical_factor_database_array_t *obj, size_t num) {
+    if (obj->m < num) {
+        size_t m = obj->m;
+        if (m <= 0) m = ARRAY_INIT_ALLOC;
+        while (m < num && m != 0) m <<= 1;
+        if (m == 0) m = num; /* in case of shift overflow */
+        if (!ecp_type2_spherical_factor_database_array__realloc_(obj, m)) return false;
+        obj->m = m;
+    }
+    for (size_t i = num; i < obj->n; i++) gtoint__ecp_type2_spherical_factor_database__finalize(&(obj->p[i]));
+    for (size_t i = obj->n; i < num; i++) gtoint__ecp_type2_spherical_factor_database__initialize(&(obj->p[i]));
+    obj->n = num;
+    return true;
+}
+
+bool gtoint__ecp_type2_spherical_factor_database_array__copy(ecp_type2_spherical_factor_database_array_t *obj, const ecp_type2_spherical_factor_database_array_t *src) {
+    if (!gtoint__ecp_type2_spherical_factor_database_array__resize(obj, src->n)) return false;
+    for (size_t i = 0; i < src->n; i++) {
+        if (!gtoint__ecp_type2_spherical_factor_database__copy(&(obj->p[i]), &(src->p[i]))) return false;
+    }
+    return true;
+}
+
+void gtoint__ecp_type2_spherical_factor_database_array__move(ecp_type2_spherical_factor_database_array_t *obj, ecp_type2_spherical_factor_database_array_t *src) {
+    gtoint__ecp_type2_spherical_factor_database_array__finalize(obj);
+    *obj = *src;
+    gtoint__ecp_type2_spherical_factor_database_array__initialize(src);
+}
+
+void gtoint__ecp_type2_spherical_factor_database_array__compact(ecp_type2_spherical_factor_database_array_t *obj) {
+    if (obj->n > 0) {
+        size_t m = ARRAY_INIT_ALLOC;
+        while (m < obj->n) m <<= 1;
+        if (m >= obj->m) return;
+        ecp_type2_spherical_factor_database_array__realloc_(obj, m);
+        obj->m = m;
+    }
+    else {
+        ecp_type2_spherical_factor_database_array__free_(obj);
+        obj->m = 0;
+        ecp_type2_spherical_factor_database_array__clear_(obj);
+    }
 }

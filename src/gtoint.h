@@ -1,7 +1,7 @@
 /*
  * LibGtoint: an analytical GTO integral library for C and Fortran.
  *
- * Copyright (c) 2020-2021 Arihiro Yoshida. All rights reserved.
+ * Copyright (c) 2020-2023 Arihiro Yoshida. All rights reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -120,6 +120,54 @@ gtoint_error_t gtoint_compute_ecp_integrals(
     gtoint_integrator_t itg,
     const gtoint_double3_t *p0, gtoint_basis_shell_t bas0,
     const gtoint_double3_t *p1, gtoint_basis_shell_t bas1,
+    const gtoint_double3_t *pc, gtoint_ecp_shell_t ecp,
+    int nd, const gtoint_int3_t *d0, const gtoint_int3_t *d1, const gtoint_int3_t *dc,
+    double *out
+);
+
+gtoint_error_t gtoint_compute_weighted_overlap_integrals(
+    gtoint_integrator_t itg,
+    const gtoint_double3_t *p0, gtoint_basis_shell_t bas0, const gtoint_double3_t *pw0, double gw0,
+    const gtoint_double3_t *p1, gtoint_basis_shell_t bas1, const gtoint_double3_t *pw1, double gw1,
+    int nd, const gtoint_int3_t *d0, const gtoint_int3_t *d1,
+    double *out
+);
+gtoint_error_t gtoint_compute_weighted_kinetic_energy_integrals(
+    gtoint_integrator_t itg,
+    const gtoint_double3_t *p0, gtoint_basis_shell_t bas0, const gtoint_double3_t *pw0, double gw0,
+    const gtoint_double3_t *p1, gtoint_basis_shell_t bas1, const gtoint_double3_t *pw1, double gw1,
+    int nd, const gtoint_int3_t *d0, const gtoint_int3_t *d1,
+    double *out
+);
+gtoint_error_t gtoint_compute_weighted_nuclear_attraction_integrals(
+    gtoint_integrator_t itg,
+    const gtoint_double3_t *p0, gtoint_basis_shell_t bas0, const gtoint_double3_t *pw0, double gw0,
+    const gtoint_double3_t *p1, gtoint_basis_shell_t bas1, const gtoint_double3_t *pw1, double gw1,
+    const gtoint_double3_t *pc,
+    int nd, const gtoint_int3_t *d0, const gtoint_int3_t *d1, const gtoint_int3_t *dc,
+    double *out
+);
+gtoint_error_t gtoint_compute_weighted_multipole_moment_integrals(
+    gtoint_integrator_t itg,
+    const gtoint_double3_t *p0, gtoint_basis_shell_t bas0, const gtoint_double3_t *pw0, double gw0,
+    const gtoint_double3_t *p1, gtoint_basis_shell_t bas1, const gtoint_double3_t *pw1, double gw1,
+    const gtoint_double3_t *pm, int nam, const gtoint_int3_t *am,
+    int nd, const gtoint_int3_t *d0, const gtoint_int3_t *d1,
+    double *out
+);
+gtoint_error_t gtoint_compute_weighted_electron_repulsion_integrals(
+    gtoint_integrator_t itg,
+    const gtoint_double3_t *p0, gtoint_basis_shell_t bas0, const gtoint_double3_t *pw0, double gw0,
+    const gtoint_double3_t *p1, gtoint_basis_shell_t bas1, const gtoint_double3_t *pw1, double gw1,
+    const gtoint_double3_t *p2, gtoint_basis_shell_t bas2, const gtoint_double3_t *pw2, double gw2,
+    const gtoint_double3_t *p3, gtoint_basis_shell_t bas3, const gtoint_double3_t *pw3, double gw3,
+    int nd, const gtoint_int3_t *d0, const gtoint_int3_t *d1, const gtoint_int3_t *d2, const gtoint_int3_t *d3,
+    double *out
+);
+gtoint_error_t gtoint_compute_weighted_ecp_integrals(
+    gtoint_integrator_t itg,
+    const gtoint_double3_t *p0, gtoint_basis_shell_t bas0, const gtoint_double3_t *pw0, double gw0,
+    const gtoint_double3_t *p1, gtoint_basis_shell_t bas1, const gtoint_double3_t *pw1, double gw1,
     const gtoint_double3_t *pc, gtoint_ecp_shell_t ecp,
     int nd, const gtoint_int3_t *d0, const gtoint_int3_t *d1, const gtoint_int3_t *dc,
     double *out

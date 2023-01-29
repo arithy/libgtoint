@@ -1,7 +1,7 @@
 /*
  * LibGtoint: an analytical GTO integral library for C and Fortran.
  *
- * Copyright (c) 2020-2021 Arihiro Yoshida. All rights reserved.
+ * Copyright (c) 2020-2023 Arihiro Yoshida. All rights reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -51,8 +51,8 @@ struct gtoint_integrator_tag {
     struct gtoint_integrator_ecp_tag {
         spherical_harmonics_database_t h;
         ecp_type2_angular_integral_database_t a;
-        ecp_type2_spherical_factor_database_t s[2]; /* Must be cleared whenever center positions are changed. */
-        ecp_type2_radial_integral_database_t r;     /* Must be cleared whenever center positions and exponents are changed. */
+        ecp_type2_spherical_factor_database_array_t s; /* Must be cleared whenever center positions are changed. */
+        ecp_type2_radial_integral_database_t r;        /* Must be cleared whenever center positions and exponents are changed. */
     } ecp;
 };
 
@@ -111,6 +111,35 @@ gtoint_error_t gtoint__compute_scalar_ecp_type2_integrals(
     gtoint_integrator_t itg,
     const double3_t *p0, size_t na0, const int3_t *a0, size_t ng0, const double *g0, const double *c0,
     const double3_t *p1, size_t na1, const int3_t *a1, size_t ng1, const double *g1, const double *c1,
+    const double3_t *pc, int ac, int rc, size_t ngc, const double *gc, const double *cc,
+    size_t nd, const int3_t *d0, const int3_t *d1, const int3_t *dc
+);
+
+gtoint_error_t gtoint__compute_weighted_scalar_ecp_type1_integrals_0(
+    gtoint_integrator_t itg,
+    const double3_t *p0, size_t na0, const int3_t *a0, size_t ng0, const double *g0, const double *c0, const double3_t *pw0, double gw0,
+    const double3_t *p1, size_t na1, const int3_t *a1, size_t ng1, const double *g1, const double *c1, const double3_t *pw1, double gw1,
+    const double3_t *pc, size_t ngc, const double *gc, const double *cc,
+    size_t nd, const int3_t *d0, const int3_t *d1, const int3_t *dc
+);
+gtoint_error_t gtoint__compute_weighted_scalar_ecp_type1_integrals_1(
+    gtoint_integrator_t itg,
+    const double3_t *p0, size_t na0, const int3_t *a0, size_t ng0, const double *g0, const double *c0, const double3_t *pw0, double gw0,
+    const double3_t *p1, size_t na1, const int3_t *a1, size_t ng1, const double *g1, const double *c1, const double3_t *pw1, double gw1,
+    const double3_t *pc, size_t ngc, const double *gc, const double *cc,
+    size_t nd, const int3_t *d0, const int3_t *d1, const int3_t *dc
+);
+gtoint_error_t gtoint__compute_weighted_scalar_ecp_type1_integrals_2(
+    gtoint_integrator_t itg,
+    const double3_t *p0, size_t na0, const int3_t *a0, size_t ng0, const double *g0, const double *c0, const double3_t *pw0, double gw0,
+    const double3_t *p1, size_t na1, const int3_t *a1, size_t ng1, const double *g1, const double *c1, const double3_t *pw1, double gw1,
+    const double3_t *pc, size_t ngc, const double *gc, const double *cc,
+    size_t nd, const int3_t *d0, const int3_t *d1, const int3_t *dc
+);
+gtoint_error_t gtoint__compute_weighted_scalar_ecp_type2_integrals(
+    gtoint_integrator_t itg,
+    const double3_t *p0, size_t na0, const int3_t *a0, size_t ng0, const double *g0, const double *c0, const double3_t *pw0, double gw0,
+    const double3_t *p1, size_t na1, const int3_t *a1, size_t ng1, const double *g1, const double *c1, const double3_t *pw1, double gw1,
     const double3_t *pc, int ac, int rc, size_t ngc, const double *gc, const double *cc,
     size_t nd, const int3_t *d0, const int3_t *d1, const int3_t *dc
 );

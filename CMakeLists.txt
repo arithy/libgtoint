@@ -33,7 +33,7 @@ function(add_common_compile_options target)
                 $<$<CONFIG:Release>:-ffast-math>
             >
             $<$<C_COMPILER_ID:Clang>:
-                -Wall -Wextra -Wno-unused-parameter -pedantic -Werror
+                -Wall -Wextra -Wno-unused-parameter -Wno-gnu-folding-constant -Wno-gnu-zero-variadic-macro-arguments -pedantic -Werror
                 $<$<CONFIG:Release>:-ffast-math>
             >
             $<$<AND:$<C_COMPILER_ID:Intel>,$<NOT:$<PLATFORM_ID:Windows>>>:
@@ -79,6 +79,7 @@ add_library(
     src/cache-ecp0.c
     src/cache-ecp1.c
     src/cache-ecp2.c
+    src/cache-ecp2-w.c
     src/function.c
     src/function-boys.c
     src/function-bessel.c
