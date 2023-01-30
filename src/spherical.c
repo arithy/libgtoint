@@ -1,7 +1,7 @@
 /*
  * LibGtoint: an analytical GTO integral library for C and Fortran.
  *
- * Copyright (c) 2020-2021 Arihiro Yoshida. All rights reserved.
+ * Copyright (c) 2020-2023 Arihiro Yoshida. All rights reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -390,6 +390,7 @@ void gtoint__spherical_harmonics_array__compact(spherical_harmonics_array_t *obj
         if (m >= obj->m) return;
         spherical_harmonics_array__realloc_(obj, m);
         obj->m = m;
+        for (size_t i = 0; i < obj->n; i++) gtoint__spherical_harmonics__compact(&(obj->p[i]));
     }
     else {
         spherical_harmonics_array__free_(obj);

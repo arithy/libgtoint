@@ -1,7 +1,7 @@
 /*
  * LibGtoint: an analytical GTO integral library for C and Fortran.
  *
- * Copyright (c) 2020-2021 Arihiro Yoshida. All rights reserved.
+ * Copyright (c) 2020-2023 Arihiro Yoshida. All rights reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -188,6 +188,7 @@ void gtoint__ecp_type2_angular_integral_array__compact(ecp_type2_angular_integra
         if (m >= obj->m) return;
         ecp_type2_angular_integral_array__realloc_(obj, m);
         obj->m = m;
+        for (size_t i = 0; i < obj->n; i++) gtoint__ecp_type2_angular_integral_entry__compact(&(obj->p[i]));
     }
     else {
         ecp_type2_angular_integral_array__free_(obj);

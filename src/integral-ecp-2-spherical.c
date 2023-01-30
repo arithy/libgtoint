@@ -157,6 +157,7 @@ void gtoint__ecp_type2_spherical_factor_array__compact(ecp_type2_spherical_facto
         if (m >= obj->m) return;
         ecp_type2_spherical_factor_array__realloc_(obj, m);
         obj->m = m;
+        for (size_t i = obj->n; i < obj->n; i++) gtoint__ecp_type2_spherical_factor_entry__compact(&(obj->p[i]));
     }
     else {
         ecp_type2_spherical_factor_array__free_(obj);
@@ -300,6 +301,7 @@ void gtoint__ecp_type2_spherical_factor_database_array__compact(ecp_type2_spheri
         if (m >= obj->m) return;
         ecp_type2_spherical_factor_database_array__realloc_(obj, m);
         obj->m = m;
+        for (size_t i = 0; i < obj->n; i++) gtoint__ecp_type2_spherical_factor_database__compact(&(obj->p[i]));
     }
     else {
         ecp_type2_spherical_factor_database_array__free_(obj);
