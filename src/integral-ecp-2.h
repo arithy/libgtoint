@@ -94,7 +94,7 @@ typedef struct ecp_type2_radial_integral_array_tag {
 } ecp_type2_radial_integral_array_t;
 
 typedef struct ecp_type2_radial_integral_database_tag {
-    double gr0, gr1, g0, g1, gc; /* The parameters. */
+    double gr0, gr1, g0, g1, gc, e0, e1; /* The parameters. */
     double tol; /* The error tolerance. */
     size_t n; /* The number of the entries. */
     size_t_array_t h; /* The hash table. [HASH_TABLE_SIZE] */
@@ -175,7 +175,7 @@ void gtoint__ecp_type2_radial_integral_array__compact(ecp_type2_radial_integral_
 void gtoint__ecp_type2_radial_integral_database__initialize(ecp_type2_radial_integral_database_t *obj);
 void gtoint__ecp_type2_radial_integral_database__finalize(ecp_type2_radial_integral_database_t *obj);
 void gtoint__ecp_type2_radial_integral_database__clear(ecp_type2_radial_integral_database_t *obj);
-void gtoint__ecp_type2_radial_integral_database__reset(ecp_type2_radial_integral_database_t *obj, double3_t r0c, double3_t r1c, double g0, double g1, double gc);
+void gtoint__ecp_type2_radial_integral_database__reset(ecp_type2_radial_integral_database_t *obj, double3_t r0c, double3_t r1c, double g0, double g1, double gc, double e0, double e1);
 bool gtoint__ecp_type2_radial_integral_database__fetch(ecp_type2_radial_integral_database_t *obj, const ecp_type2_radial_integral_index_t *index, double *out);
 bool gtoint__ecp_type2_radial_integral_database__copy(ecp_type2_radial_integral_database_t *obj, const ecp_type2_radial_integral_database_t *src);
 void gtoint__ecp_type2_radial_integral_database__move(ecp_type2_radial_integral_database_t *obj, ecp_type2_radial_integral_database_t *src);

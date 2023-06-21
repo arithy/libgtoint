@@ -80,6 +80,8 @@ set_test(integral-w-ecp-1-2)
 set_test(integral-w-ecp-2)
 set_test(integral-w-eri)
 
+set_test(nan)
+
 if(Fortran)
     set_test(interface-fortran EXT f90)
 endif()
