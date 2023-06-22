@@ -64,7 +64,7 @@ int main(int argc, char **argv) {
             const gtoint_double3_t pc = { 0.17687836525872241, -0.00037794522491180004, -0.013417055484368902 };
             const double gc[] = { 11.793279999999999 };
             const double cc[] = { 6.2076000000000002 };
-            const gtoint_int3_t d[] = { 0, 0, 0 };
+            const gtoint_int3_t d[] = { { 0, 0, 0 } };
             if ((e = gtoint__compute_scalar_ecp_type2_integrals(
                 itg,
                 &p0, 1, m0, 3, e0, c0,
