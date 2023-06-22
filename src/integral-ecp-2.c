@@ -86,7 +86,6 @@ gtoint_error_t gtoint__compute_scalar_ecp_type2_integrals(
     const double3_t *pc, int ac, int rc, size_t ngc, const double *gc, const double *cc,
     size_t nd, const int3_t *d0, const int3_t *d1, const int3_t *dc
 ) {
-#define NVAR 1
 #define EXPAND_VRR_0(xyz) /* reference variables: itg, e, s, is, ng0, ng1, ngc, ng01c, g0, r0c */ \
     { \
         s.o = is; \
@@ -393,21 +392,14 @@ gtoint_error_t gtoint__compute_scalar_ecp_type2_integrals(
     const size_t ng01 = ng0 * ng1;
     const size_t ng01c = ng01 * ngc;
     if (!gtoint__cache__reset(&(itg->c), ng01c)) return GTOINT_ERROR_MEMORY;
-    if (!gtoint__double_array__resize(&(itg->w), ng01 * NVAR)) return GTOINT_ERROR_MEMORY;
-    size_t ivar = 0;
-    double *const e01 = itg->w.p + ng01 * ivar++;
-    assert(ivar == NVAR);
+    if (!gtoint__double_array__resize(&(itg->w), ng0 + ng1)) return GTOINT_ERROR_MEMORY;
+    double *const e0 = itg->w.p;
+    double *const e1 = e0 + ng0;
     for (size_t i0 = 0; i0 < ng0; i0++) {
-        const double e0 = exp(-g0[i0] * r0cw);
-    for (size_t i1 = 0; i1 < ng1; i1++) {
-        e01[i0 + ng0 * i1] = e0;
-    }
+        e0[i0] = -g0[i0] * r0cw;
     }
     for (size_t i1 = 0; i1 < ng1; i1++) {
-        const double e1 = exp(-g1[i1] * r1cw);
-    for (size_t i0 = 0; i0 < ng0; i0++) {
-        e01[i0 + ng0 * i1] *= e1;
-    }
+        e1[i1] = -g1[i1] * r1cw;
     }
     size_t io = 0;
     for (size_t id = 0; id < nd; id++) {
@@ -530,6 +522,11 @@ gtoint_error_t gtoint__compute_scalar_ecp_type2_integrals(
                             for (size_t i0 = 0; i0 < ng0; i0++) {
                             for (size_t ic = 0; ic < ngc; ic++, i++) {
                                 { /* screening by approximated estimation */
+                                    /* Reference:
+                                     * "Efficient Method for Calculating Effective Core Potential Integrals"
+                                     *  Simon C. McKenzie, Evgeny Epifanovsky, Giuseppe M. J. Barca, Andrew T. B. Gilbert, and Peter M. W. Gill
+                                     *  J. Phys. Chem. A 2018, 122, 3066-3075
+                                     */
                                     const int a0s = s.i.ecp2.a[0].x + s.i.ecp2.a[0].y + s.i.ecp2.a[0].z;
                                     const int a1s = s.i.ecp2.a[1].x + s.i.ecp2.a[1].y + s.i.ecp2.a[1].z;
                                     const double g0c = g0[i0] + gc[ic];
@@ -549,7 +546,7 @@ gtoint_error_t gtoint__compute_scalar_ecp_type2_integrals(
                                         ((t <= 1.0) ? D_SINH1 : exp(t) / (2.0 * t)) <= itg->cut
                                     ) { v[i] = 0.0; continue; }
                                 }
-                                gtoint__ecp_type2_radial_integral_database__reset(&(itg->ecp.r), r0c, r1c, g0[i0], g1[i1], gc[ic]);
+                                gtoint__ecp_type2_radial_integral_database__reset(&(itg->ecp.r), r0c, r1c, g0[i0], g1[i1], gc[ic], e0[i0], e1[i1]);
                                 double v0x = 0.0;
                                 for (int k0x = 0; k0x <= s.i.ecp2.a[0].x; k0x++) {
                                 double v0y = 0.0;
@@ -619,7 +616,7 @@ gtoint_error_t gtoint__compute_scalar_ecp_type2_integrals(
                                 }
                                 v0x += v0y * binomial_(s.i.ecp2.a[0].x, k0x) * power_(r0c.x, s.i.ecp2.a[0].x - k0x);
                                 }
-                                v[i] = v0x * e01[i0 + ng0 * i1] * D_16PI2;
+                                v[i] = v0x * D_16PI2;
                             }
                             }
                             }
@@ -650,7 +647,7 @@ gtoint_error_t gtoint__compute_scalar_ecp_type2_integrals(
                                         exp(-ge0 * gc[ic] * r0cw / (ge0 + gc[ic])) <= itg->cut
                                     ) { v[i] = 0.0; continue; }
                                 }
-                                gtoint__ecp_type2_radial_integral_database__reset(&(itg->ecp.r), r0c, r1c, g0[i0], g1[i1], gc[ic]);
+                                gtoint__ecp_type2_radial_integral_database__reset(&(itg->ecp.r), r0c, r1c, g0[i0], g1[i1], gc[ic], e0[i0], e1[i1]);
                                 double v0x = 0.0;
                                 for (int k0x = 0; k0x <= s.i.ecp2.a[0].x; k0x++) {
                                 double v0y = 0.0;
@@ -692,7 +689,7 @@ gtoint_error_t gtoint__compute_scalar_ecp_type2_integrals(
                                 }
                                 v0x += v0y * binomial_(s.i.ecp2.a[0].x, k0x) * power_(r0c.x, s.i.ecp2.a[0].x - k0x);
                                 }
-                                v[i] = v0x * e01[i0 + ng0 * i1] * D_8RPI3;
+                                v[i] = v0x * D_8RPI3;
                             }
                             }
                             }
@@ -723,7 +720,7 @@ gtoint_error_t gtoint__compute_scalar_ecp_type2_integrals(
                                         exp(-ge1 * gc[ic] * r1cw / (ge1 + gc[ic])) <= itg->cut
                                     ) { v[i] = 0.0; continue; }
                                 }
-                                gtoint__ecp_type2_radial_integral_database__reset(&(itg->ecp.r), r0c, r1c, g0[i0], g1[i1], gc[ic]);
+                                gtoint__ecp_type2_radial_integral_database__reset(&(itg->ecp.r), r0c, r1c, g0[i0], g1[i1], gc[ic], e0[i0], e1[i1]);
                                 double v1x = 0.0;
                                 for (int k1x = 0; k1x <= s.i.ecp2.a[1].x; k1x++) {
                                 double v1y = 0.0;
@@ -765,7 +762,7 @@ gtoint_error_t gtoint__compute_scalar_ecp_type2_integrals(
                                 }
                                 v1x += v1y * binomial_(s.i.ecp2.a[1].x, k1x) * power_(r1c.x, s.i.ecp2.a[1].x - k1x);
                                 }
-                                v[i] = v1x * e01[i0 + ng0 * i1] * D_8RPI3;
+                                v[i] = v1x * D_8RPI3;
                             }
                             }
                             }
@@ -791,7 +788,7 @@ gtoint_error_t gtoint__compute_scalar_ecp_type2_integrals(
                             for (size_t i1 = 0; i1 < ng1; i1++) {
                             for (size_t i0 = 0; i0 < ng0; i0++) {
                             for (size_t ic = 0; ic < ngc; ic++, i++) {
-                                gtoint__ecp_type2_radial_integral_database__reset(&(itg->ecp.r), r0c, r1c, g0[i0], g1[i1], gc[ic]);
+                                gtoint__ecp_type2_radial_integral_database__reset(&(itg->ecp.r), r0c, r1c, g0[i0], g1[i1], gc[ic], e0[i0], e1[i1]);
                                 const double *const ti0 = itg->ecp.a.a.p[si0].v.p;
                                 const double *const ti1 = itg->ecp.a.a.p[si1].v.p;
                                 double vm = 0.0;
@@ -831,7 +828,6 @@ gtoint_error_t gtoint__compute_scalar_ecp_type2_integrals(
     }
     }
     return GTOINT_ERROR_OK;
-#undef NVAR
 #undef EXPAND_VRR_0
 #undef EXPAND_VRR_1
 #undef EXPAND_VRR_C

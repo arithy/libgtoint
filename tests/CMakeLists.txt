@@ -70,6 +70,8 @@ set_test(integral-eri)
 set_test(integral-eri-cartesian)
 set_test(integral-eri-spherical)
 
+set_test(nan)
+
 if(Fortran)
     set_test(interface-fortran EXT f90)
 endif()
