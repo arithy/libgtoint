@@ -10,8 +10,6 @@ project(
 
 set(Fortran ON CACHE BOOL "Support Fortran interface")
 
-set(CMAKE_C_STANDARD 99)
-
 if(Fortran)
     include(CheckLanguage)
     check_language(Fortran)
@@ -24,7 +22,12 @@ if(Fortran)
     endif()
 endif()
 
+if(MSVC)
+    string(REGEX REPLACE "/W[0-3]" "" CMAKE_C_FLAGS "${CMAKE_C_FLAGS}") # To avoid the warning D9025.
+endif()
+
 function(add_common_compile_options target)
+    target_compile_features(${target} PRIVATE c_std_99)
     target_compile_options(
         ${target} PRIVATE
         $<$<COMPILE_LANGUAGE:C>:
@@ -33,7 +36,7 @@ function(add_common_compile_options target)
                 $<$<CONFIG:Release>:-ffast-math>
             >
             $<$<C_COMPILER_ID:Clang>:
-                -Wall -Wextra -Wno-unused-parameter -pedantic -Werror
+                -Wall -Wextra -Wno-unused-parameter -Wno-gnu-folding-constant -Wno-gnu-zero-variadic-macro-arguments -pedantic -Werror
                 $<$<CONFIG:Release>:-ffast-math>
             >
             $<$<AND:$<C_COMPILER_ID:Intel>,$<NOT:$<PLATFORM_ID:Windows>>>:
