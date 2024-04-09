@@ -196,6 +196,7 @@ bool gtoint__ecp_type2_spherical_factor_database__fetch(
     if (azim < 0) azim = ~azim;
     if ((size_t)azim >= obj->n) {
         if (!gtoint__ecp_type2_spherical_factor_array__resize(&(obj->a), (size_t)azim + 1)) return false;
+        obj->n = (size_t)azim + 1;
     }
     if (obj->a.p[azim].v.n <= 0) {
         if (!ecp_type2_spherical_factor_entry__compute_(&(obj->a.p[azim]), sph, azim, obj->r)) return false;
@@ -212,6 +213,7 @@ bool gtoint__ecp_type2_spherical_factor_database__index(
     if (azim < 0) azim = ~azim;
     if ((size_t)azim >= obj->n) {
         if (!gtoint__ecp_type2_spherical_factor_array__resize(&(obj->a), (size_t)azim + 1)) return false;
+        obj->n = (size_t)azim + 1;
     }
     if (obj->a.p[azim].v.n <= 0) {
         if (!ecp_type2_spherical_factor_entry__compute_(&(obj->a.p[azim]), sph, azim, obj->r)) return false;
