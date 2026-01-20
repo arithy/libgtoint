@@ -1,4 +1,6 @@
-LibGtoint: an analytical GTO integral library for C and Fortran.
+LibGtoint: An analytical GTO integral library for C and Fortran.
+
+MIT License
 
 Copyright (c) 2020-2021 Arihiro Yoshida. All rights reserved.
 
