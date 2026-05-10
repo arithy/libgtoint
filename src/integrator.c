@@ -41,8 +41,7 @@ gtoint_error_t gtoint_integrator_create(gtoint_integrator_t *itg) {
     gtoint__spherical_harmonics_database__initialize(&(p->ecp.h));
     gtoint__spherical_harmonics_database__reset(&(p->ecp.h), false);
     gtoint__ecp_type2_angular_integral_database__initialize(&(p->ecp.a));
-    gtoint__ecp_type2_spherical_factor_database__initialize(&(p->ecp.s[0]));
-    gtoint__ecp_type2_spherical_factor_database__initialize(&(p->ecp.s[1]));
+    gtoint__ecp_type2_spherical_factor_database_array__initialize(&(p->ecp.s));
     gtoint__ecp_type2_radial_integral_database__initialize(&(p->ecp.r));
     *itg = p;
     return GTOINT_ERROR_OK;
@@ -58,8 +57,7 @@ void gtoint_integrator_destroy(gtoint_integrator_t itg) {
     gtoint__double_pointer_array__finalize(&(itg->p));
     gtoint__spherical_harmonics_database__finalize(&(itg->ecp.h));
     gtoint__ecp_type2_angular_integral_database__finalize(&(itg->ecp.a));
-    gtoint__ecp_type2_spherical_factor_database__finalize(&(itg->ecp.s[0]));
-    gtoint__ecp_type2_spherical_factor_database__finalize(&(itg->ecp.s[1]));
+    gtoint__ecp_type2_spherical_factor_database_array__finalize(&(itg->ecp.s));
     gtoint__ecp_type2_radial_integral_database__finalize(&(itg->ecp.r));
     free(itg);
 }
@@ -79,8 +77,7 @@ gtoint_error_t gtoint_integrator_copy(gtoint_integrator_t *itg, gtoint_integrato
     gtoint__spherical_harmonics_database__initialize(&(p->ecp.h));
     gtoint__spherical_harmonics_database__reset(&(p->ecp.h), false);
     gtoint__ecp_type2_angular_integral_database__initialize(&(p->ecp.a));
-    gtoint__ecp_type2_spherical_factor_database__initialize(&(p->ecp.s[0]));
-    gtoint__ecp_type2_spherical_factor_database__initialize(&(p->ecp.s[1]));
+    gtoint__ecp_type2_spherical_factor_database_array__initialize(&(p->ecp.s));
     gtoint__ecp_type2_radial_integral_database__initialize(&(p->ecp.r));
     if (!gtoint__spherical_harmonics_database__copy(&(p->h), &(src->h))) goto ERROR;
     if (!gtoint__spherical_harmonics_database__copy(&(p->ecp.h), &(src->ecp.h))) goto ERROR;
@@ -104,10 +101,8 @@ void gtoint_integrator_cleanup_memory(gtoint_integrator_t itg) {
     gtoint__double_array__compact(&(itg->w));
     gtoint__double_pointer_array__resize(&(itg->p), 0);
     gtoint__double_pointer_array__compact(&(itg->p));
-    gtoint__ecp_type2_spherical_factor_database__clear(&(itg->ecp.s[0]));
-    gtoint__ecp_type2_spherical_factor_database__compact(&(itg->ecp.s[0]));
-    gtoint__ecp_type2_spherical_factor_database__clear(&(itg->ecp.s[1]));
-    gtoint__ecp_type2_spherical_factor_database__compact(&(itg->ecp.s[1]));
+    gtoint__ecp_type2_spherical_factor_database_array__resize(&(itg->ecp.s), 0);
+    gtoint__ecp_type2_spherical_factor_database_array__compact(&(itg->ecp.s));
     gtoint__ecp_type2_radial_integral_database__clear(&(itg->ecp.r));
     gtoint__ecp_type2_radial_integral_database__compact(&(itg->ecp.r));
 }

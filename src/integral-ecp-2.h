@@ -73,6 +73,11 @@ typedef struct ecp_type2_spherical_factor_database_tag {
     ecp_type2_spherical_factor_array_t a; /* The entries. */
 } ecp_type2_spherical_factor_database_t;
 
+typedef struct ecp_type2_spherical_factor_database_array_tag {
+    size_t m, n;
+    ecp_type2_spherical_factor_database_t *p;
+} ecp_type2_spherical_factor_database_array_t;
+
 typedef struct ecp_type2_radial_integral_index_tag {
     int l[2];
     int k;
@@ -152,6 +157,13 @@ bool gtoint__ecp_type2_spherical_factor_database__index(
 bool gtoint__ecp_type2_spherical_factor_database__copy(ecp_type2_spherical_factor_database_t *obj, const ecp_type2_spherical_factor_database_t *src);
 void gtoint__ecp_type2_spherical_factor_database__move(ecp_type2_spherical_factor_database_t *obj, ecp_type2_spherical_factor_database_t *src);
 void gtoint__ecp_type2_spherical_factor_database__compact(ecp_type2_spherical_factor_database_t *obj);
+
+void gtoint__ecp_type2_spherical_factor_database_array__initialize(ecp_type2_spherical_factor_database_array_t *obj);
+void gtoint__ecp_type2_spherical_factor_database_array__finalize(ecp_type2_spherical_factor_database_array_t *obj);
+bool gtoint__ecp_type2_spherical_factor_database_array__resize(ecp_type2_spherical_factor_database_array_t *obj, size_t num);
+bool gtoint__ecp_type2_spherical_factor_database_array__copy(ecp_type2_spherical_factor_database_array_t *obj, const ecp_type2_spherical_factor_database_array_t *src);
+void gtoint__ecp_type2_spherical_factor_database_array__move(ecp_type2_spherical_factor_database_array_t *obj, ecp_type2_spherical_factor_database_array_t *src);
+void gtoint__ecp_type2_spherical_factor_database_array__compact(ecp_type2_spherical_factor_database_array_t *obj);
 
 void gtoint__ecp_type2_radial_integral_array__initialize(ecp_type2_radial_integral_array_t *obj);
 void gtoint__ecp_type2_radial_integral_array__finalize(ecp_type2_radial_integral_array_t *obj);

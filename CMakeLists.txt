@@ -82,6 +82,7 @@ add_library(
     src/cache-ecp0.c
     src/cache-ecp1.c
     src/cache-ecp2.c
+    src/cache-ecp2-w.c
     src/function.c
     src/function-boys.c
     src/function-bessel.c

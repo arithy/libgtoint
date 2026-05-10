@@ -1,7 +1,7 @@
 /*
  * LibGtoint: an analytical GTO integral library for C and Fortran.
  *
- * Copyright (c) 2020-2021 Arihiro Yoshida. All rights reserved.
+ * Copyright (c) 2020-2023 Arihiro Yoshida. All rights reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -68,6 +68,7 @@ bool gtoint__cache__reference_to_store_eri(cache_t *obj, const index_t *index, d
 bool gtoint__cache__reference_to_store_ecp0(cache_t *obj, const index_t *index, double **value);
 bool gtoint__cache__reference_to_store_ecp1(cache_t *obj, const index_t *index, double **value);
 bool gtoint__cache__reference_to_store_ecp2(cache_t *obj, const index_t *index, double **value);
+bool gtoint__cache__reference_to_store_ecp2_w(cache_t *obj, const index_t *index, double **value);
 bool gtoint__cache__reference_to_fetch_oi(const cache_t *obj, const index_t *index, const double **value);
 bool gtoint__cache__reference_to_fetch_kei(const cache_t *obj, const index_t *index, const double **value);
 bool gtoint__cache__reference_to_fetch_nai(const cache_t *obj, const index_t *index, const double **value);
@@ -76,6 +77,7 @@ bool gtoint__cache__reference_to_fetch_eri(const cache_t *obj, const index_t *in
 bool gtoint__cache__reference_to_fetch_ecp0(const cache_t *obj, const index_t *index, const double **value);
 bool gtoint__cache__reference_to_fetch_ecp1(const cache_t *obj, const index_t *index, const double **value);
 bool gtoint__cache__reference_to_fetch_ecp2(const cache_t *obj, const index_t *index, const double **value);
+bool gtoint__cache__reference_to_fetch_ecp2_w(const cache_t *obj, const index_t *index, const double **value);
 bool gtoint__cache__copy(cache_t *obj, const cache_t *src);
 void gtoint__cache__move(cache_t *obj, cache_t *src);
 void gtoint__cache__compact(cache_t *obj);

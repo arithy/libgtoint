@@ -1,7 +1,7 @@
 /*
  * LibGtoint: an analytical GTO integral library for C and Fortran.
  *
- * Copyright (c) 2020-2021 Arihiro Yoshida. All rights reserved.
+ * Copyright (c) 2020-2023 Arihiro Yoshida. All rights reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -78,6 +78,13 @@ typedef struct index_ecp2_tag {
     int r;
 } index_ecp2_t;
 
+typedef struct index_ecp2_w_tag {
+    int3_t a[2];
+    int3_t d[3], dw[2];
+    int3_t k[2];
+    int r;
+} index_ecp2_w_t;
+
 typedef union index_tag {
     index_oi_t oi;
     index_kei_t kei;
@@ -87,6 +94,7 @@ typedef union index_tag {
     index_ecp0_t ecp0;
     index_ecp1_t ecp1;
     index_ecp2_t ecp2;
+    index_ecp2_w_t ecp2_w;
 } index_t;
 
 #ifdef __cplusplus
